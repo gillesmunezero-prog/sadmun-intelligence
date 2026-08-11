@@ -135,3 +135,88 @@ les lots de travaux et l'assistance technique.
 ## 13. Niveau de confiance global
 
 - Donnees factuelles : **Eleve**. Analyse IA : **Moyen**. Cibles/scores : **Faible/Moyen**. Decideurs entreprise : **A qualifier**.
+
+## 14. Mise a jour Sprint 1 bis - Verifications complementaires (organisme d'execution, equipe Banque Mondiale, marches reels)
+
+**Organisme d'execution confirme :** Ministere des Transports et de la Logistique (confirme sur la fiche officielle, aucun changement).
+
+**Equipe Banque Mondiale (sources publiques) :**
+
+| Role | Nom | Source | Confiance |
+|---|---|---|---|
+| Task Team Leader | Monica Augustina Cristina Moldovan | Fiche projet WB | Eleve |
+| Procurement Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Environmental Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Social Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Financial Management Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+
+**Marches / recrutements reellement publies sur ce projet a ce jour (source : onglet Procurement, projects.worldbank.org, consulte le 11/08/2026) :**
+
+| Poste / avis | Type | Date de publication |
+|---|---|---|
+| Recruitment of Monitoring and Evaluation Officer | Request for Expression of Interest | 23 juin 2026 |
+| Recruitment of Administrative and Financial Officer in Nampula Province | Request for Expression of Interest | 23 juin 2026 |
+| Recruitment of SEA/SH Specialist | Request for Expression of Interest | 23 juin 2026 |
+| Recruitment of Social Specialist (Nampula) | Request for Expression of Interest | 23 juin 2026 |
+| PIU Project Coordinator | Request for Expression of Interest | 3 juin 2026 |
+| Recruitment of a Procurement Officer | Request for Expression of Interest | 2 juin 2026 |
+| General Procurement Notice | General Procurement Notice | 7 mai 2026 |
+
+Ces avis reels confirment que la PIU se constitue actuellement, avec une implantation confirmee a Nampula (province traversee par le corridor). Aucun "Contract Award" n'est encore publie - aucun lot de travaux ou d'assistance technique n'a ete attribue a ce jour.
+
+**Entreprises comparables ayant gagne des marches similaires dans le secteur routier au Mozambique (donnees reelles, projet-frere Climate Resilient Roads for the North P500488, meme secteur transport) :**
+
+| Entreprise | Marche gagne | Source |
+|---|---|---|
+| China Road and Bridge Corporation | Fourniture de ponts metalliques - P500488, $12 748 135, juin 2025 | Avis d'attribution WB OP00365488 |
+| Mpamot Africa Pty Ltd (Afrique du Sud) + Structcon Consultoria & Engenharia (Mozambique) | Etude Pont de Lurio - P500488, $584 219, juillet 2026 | Avis d'attribution WB OP00460543 |
+
+*(Ces attributions concernent le projet P500488 (memes secteur routier/transport au Mozambique) - fournies comme reference de marche forte, pas comme preuve de participation a P510427.)*
+
+## 15. Pourquoi ces entreprises ?
+
+**China Road and Bridge Corporation** - score 65/100. A gagne un marche de fourniture de ponts metalliques de plus de $12,7M sur un projet routier Banque Mondiale au Mozambique en battant des concurrents mozambicains, portugais, vietnamiens et americains - preuve d'une strategie de prix tres competitive et d'une forte capacite a remporter des marches Banque Mondiale au Mozambique dans le secteur routier.
+
+**Mpamot Africa + Structcon** - score 58/100. Consortium Afrique du Sud/Mozambique ayant gagne une etude de pont sur le meme secteur - modele de consortium international/local pertinent pour TRACER.
+
+**Mota-Engil** - score 70/100 (maintenu) - tres forte presence historique sur les infrastructures routieres au Mozambique, profil pertinent pour les lots de travaux du corridor de Nacala.
+
+## 16. Comment entrer chez eux ?
+
+- **China Road and Bridge Corporation** : bureau regional Afrique australe (siege a Beijing, filiale Mozambique probable via projets en cours) - approche via les appels d'offres publics et le reseau CCCC (China Communications Construction Company, actionnaire).
+- **Mpamot Africa / Structcon** : Structcon est mozambicain (approche directe, siege local), Mpamot Africa a une base Afrique du Sud (Direction Afrique australe).
+- **Mota-Engil** : Direction Mozambique/Afrique australe, salons BTP regionaux.
+- Portes d'entree transverses : suivre les avis REOI de la PIU basee a Nampula (futurs interlocuteurs internes), LinkedIn, Groupe Consultatif Banque Mondiale Mozambique, association des entrepreneurs de transport/BTP.
+
+## 17. SADMUN Value Proposition
+
+Pour les entreprises qui seront attributaires de lots sur le corridor de Nacala (potentiellement etale sur plusieurs districts et provinces), SADMUN peut reduire : le cout de mobilisation multi-districts le long du corridor, le risque administratif de permitting routier dans chaque juridiction traversee, et le delai de deploiement d'equipes (hebergement, vehicules, personnel local deja disponible via SADMUN a Nampula et le long du corridor).
+
+## 18. Argumentaire commercial (specifique a ce projet)
+
+"TRACER SOP2 est un corridor de transport strategique qui traverse plusieurs districts et provinces jusqu'au port de Nacala. La PIU s'installe actuellement a Nampula. SADMUN peut securiser votre mobilisation logistique et administrative tout le long du corridor, districts par districts, pour que votre equipe technique se concentre sur les travaux et l'assistance technique."
+
+## 19. Preparation de rendez-vous (30 minutes)
+
+**Sujets a aborder :** calendrier des lots de travaux et d'assistance technique ; districts prioritaires le long du corridor ; besoins logistiques multi-districts.
+
+**Questions a poser :** "Quels lots du corridor sont prevus en premier ?" ; "Avez-vous deja une presence a Nampula ou le long du corridor ?"
+
+**Documents a montrer :** plaquette SADMUN, cartographie du corridor de Nacala et des zones d'intervention SADMUN.
+
+**Engagements a proposer :** point de contact SADMUN dedie a Nampula ; proposition de devis logistique multi-districts sous 5 jours ouvres.
+
+## 20. Probabilite de succes
+
+- **Probabilite d'obtenir un rendez-vous :** Moyenne (PIU en cours de constitution a Nampula, avis REOI actifs).
+- **Probabilite de devenir partenaire :** Moyenne a 6-12 mois une fois les premiers lots de travaux attribues.
+- **Probabilite d'obtenir une premiere mission :** Moyenne, compte tenu de la duree du projet (cloture 2030) et de l'ampleur geographique du corridor.
+
+*(Estimations qualitatives, non statistiques.)*
+
+## 21. Plan des 30 prochains jours
+
+- **Semaine 1 :** Suivre l'evolution des avis REOI de la PIU (Coordinator, M&E Officer, Procurement Officer, Social Specialist Nampula).
+- **Semaine 2 :** Cartographier les districts traverses par le corridor de Nacala et les besoins logistiques associes.
+- **Semaine 3 :** Prise de contact avec Mota-Engil et China Road and Bridge Corporation (veille commerciale, pas de mandat specifique).
+- **Semaine 4 :** Bilan du mois, mise a jour du CRM.
