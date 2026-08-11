@@ -127,3 +127,73 @@ designation officielle de l'implementing agency.
 ## 13. Niveau de confiance global
 
 - Donnees factuelles disponibles : **Eleve**. Champs manquants (borrower, implementing agency) : **A qualifier**. Analyse IA : **Moyen**. Cibles/scores : **Faible**.
+
+## 14. Mise a jour Sprint 1 bis - Verifications complementaires (organisme d'execution, equipe Banque Mondiale, marches reels)
+
+**Organisme d'execution :** toujours non designe publiquement a ce jour (verification faite le 11/08/2026 sur projects.worldbank.org - champs Borrower/Implementing Agency marques N/A par la Banque Mondiale elle-meme). Hypothese non confirmee : au Mozambique, l'eau rurale et les petites villes sont generalement du ressort de l'AIAS (Administracao de Infraestruturas de Agua e Saneamento) ou de FIPAG pour les systemes urbains/peri-urbains - **a verifier explicitement**, ne pas presumer.
+
+**Equipe Banque Mondiale (sources publiques) :**
+
+| Role | Nom | Source | Confiance |
+|---|---|---|---|
+| Task Team Leader | Chantal Richey | Fiche projet WB | Eleve |
+| Procurement Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Environmental Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Social Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Financial Management Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+
+**Marches reellement attribues sur ce projet a ce jour :** Aucun. Verification effectuee sur l'onglet Procurement (projects.worldbank.org, consulte le 11/08/2026) : "No Procurement Notices available for this project". Projet encore en phase de structuration (CD Approved le 26 mars 2026, agence d'execution non designee).
+
+**Entreprises comparables ayant gagne des marches similaires sur d'autres projets Banque Mondiale au Mozambique dans le secteur de l'eau (donnees reelles, autres projets) :**
+
+| Entreprise | Marche gagne (projet de reference) | Source |
+|---|---|---|
+| Ernst & Young Maputo | Audit financier - Green Energy Corridors Project (P179797), $33 599, juillet 2026 | Avis d'attribution WB OP00456179 |
+| Verde Azul Consult Lda (Mozambique) | Mise a jour des instruments de sauvegarde environnementale/sociale - P179797, $70 197, mai 2025 | Avis d'attribution WB OP00380434 |
+
+*(Le projet-frere Urban Water Security Project (P509890), pilote par FIPAG, publie de nombreux avis d'appel d'offres pour l'eau au Mozambique - voir dossier n7 - mais aucun n'est encore au stade "Contract Award" a ce jour. Aucune preuve directe de lien entre P512650 et FIPAG a ce stade.)*
+
+## 15. Pourquoi ces entreprises ?
+
+**Ernst & Young Maputo** - score 65/100. Profil recurrent pour l'audit financier des projets Banque Mondiale au Mozambique (preuve P179797) ; un projet de $150M en structuration necessitera un audit externe une fois operationnel.
+
+**Prestataires de forage/hydraulique rurale (profil generique)** - ce type d'acteur est systematiquement mobilise sur les projets d'eau rurale Banque Mondiale en Afrique australe, mais aucune entreprise nommement confirmee sur ce projet a ce jour - a rechercher specifiquement lors de la publication du plan de passation de marches.
+
+## 16. Comment entrer chez eux ?
+
+- **Ernst & Young Maputo** : Direction Afrique australe EY, practice Government & Public Sector.
+- **Agence d'execution (a identifier)** : surveiller les communiques de presse du Ministere des Travaux Publics, Habitacao e Recursos Hidricos et de FIPAG/AIAS pour la designation officielle.
+- Portes d'entree transverses : LinkedIn, reunions du Groupe Consultatif Banque Mondiale Mozambique, associations professionnelles du secteur eau/assainissement.
+
+## 17. SADMUN Value Proposition
+
+Pour le futur operateur/agence d'execution et ses prestataires, SADMUN peut reduire : le cout de coordination multi-sites (le projet couvre plusieurs petites villes rurales dispersees), le delai de mobilisation logistique (vehicules, hebergement, personnel local), et le risque administratif de coordination avec les autorites provinciales et districtales dans plusieurs localites simultanement.
+
+## 18. Argumentaire commercial (specifique a ce projet)
+
+"Ce projet de securite hydrique couvre plusieurs petites villes et zones rurales dispersees au Mozambique - un defi logistique multi-sites majeur. SADMUN peut coordonner la mobilisation locale (personnel, vehicules, hebergement) sur chacune des localites concernees, vous permettant de vous concentrer sur l'ingenierie et l'exploitation des systemes d'eau."
+
+## 19. Preparation de rendez-vous (30 minutes)
+
+**Sujets a aborder :** designation attendue de l'agence d'execution ; localites cibles ; besoins logistiques multi-sites.
+
+**Questions a poser :** "Savez-vous deja quelle agence pilotera l'execution ?" ; "Combien de localites seront couvertes simultanement ?"
+
+**Documents a montrer :** plaquette SADMUN, references logistique multi-sites.
+
+**Engagements a proposer :** veille active jusqu'a la designation officielle de l'agence d'execution ; prise de contact immediate a ce moment-la.
+
+## 20. Probabilite de succes
+
+- **Probabilite d'obtenir un rendez-vous :** Faible a ce stade (aucun interlocuteur officiel identifiable).
+- **Probabilite de devenir partenaire :** Faible (projet encore en structuration).
+- **Probabilite d'obtenir une premiere mission :** Faible a court terme, a reevaluer entierement une fois l'agence d'execution designee.
+
+*(Estimations qualitatives, non statistiques.)*
+
+## 21. Plan des 30 prochains jours
+
+- **Semaine 1 :** Verifier si l'agence d'execution a ete designee (fiche projet + communiques FIPAG/AIAS/Ministere).
+- **Semaine 2 :** Rechercher les communiques de presse gouvernementaux mozambicains sur ce projet specifique.
+- **Semaine 3 :** Si aucune designation, mettre le dossier en veille passive (verification mensuelle).
+- **Semaine 4 :** Bilan du mois, mise a jour du CRM.
