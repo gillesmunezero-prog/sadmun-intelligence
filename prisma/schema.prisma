@@ -1,0 +1,653 @@
+// SADMUN Intelligence - Schema de base de donnees
+// Provider : PostgreSQL (Supabase). ORM : Prisma.
+// Ce schema couvre l'ensemble des tables demandees et leurs relations :
+// Projects -> Funding -> Companies -> DecisionMakers -> CRM -> Emails -> Meetings
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// UTILISATEURS ET DROITS
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  ANALYST
+  VIEWER
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  fullName      String
+  role          UserRole @default(ANALYST)
+  avatarUrl     String?
+  phone         String?
+  isActive      Boolean  @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tasksAssigned   Task[]        @relation("TaskAssignee")
+  notes           Note[]
+  interactions    Interaction[]
+  emailsSent      Email[]
+  documentsAdded  Document[]
+  crmOwned        CRM[]
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// ORGANISATIONS (BAILLEURS, ONG, AGENCES D'EXECUTION, GOUVERNEMENTS)
+// ---------------------------------------------------------------------------
+
+enum OrganizationType {
+  FUNDER
+  NGO
+  GOVERNMENT
+  EXECUTING_AGENCY
+  MULTILATERAL
+  OTHER
+}
+
+model Organization {
+  id           String            @id @default(uuid())
+  name         String
+  type         OrganizationType
+  country      String?
+  website      String?
+  description  String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  fundedProjects    Project[]  @relation("ProjectFunder")
+  executedProjects  Project[]  @relation("ProjectExecutingAgency")
+  fundingRecords    Funding[]
+  procurementPlans  ProcurementPlan[]
+  sources           Source[]
+
+  @@map("organizations")
+}
+
+// ---------------------------------------------------------------------------
+// PROJETS
+// ---------------------------------------------------------------------------
+
+enum ProjectStatus {
+  WATCHING
+  OPEN
+  CLOSING_SOON
+  CLOSED
+  AWARDED
+  CANCELLED
+}
+
+model Project {
+  id                  String        @id @default(uuid())
+  name                String
+  description         String?
+  budget              Decimal?      @db.Decimal(18, 2)
+  currency             String?      @default("USD")
+  sector              String?
+  country             String?       @default("Mozambique")
+  province            String?
+  city                String?
+  latitude            Float?
+  longitude           Float?
+  funderId            String?
+  funder              Organization? @relation("ProjectFunder", fields: [funderId], references: [id])
+  executingAgencyId   String?
+  executingAgency     Organization? @relation("ProjectExecutingAgency", fields: [executingAgencyId], references: [id])
+  publicationDate     DateTime?
+  deadlineDate        DateTime?
+  status              ProjectStatus @default(WATCHING)
+  sadmunProbability   Int           @default(0) // 0-100
+  officialUrl         String?
+  tags                String[]
+  sourceId            String?
+  source              Source?       @relation(fields: [sourceId], references: [id])
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  tenders             Tender[]
+  funding             Funding[]
+  documents           Document[]
+  companyMatches      ProjectCompanyMatch[]
+  decisionMakerLinks  ProjectDecisionMaker[]
+  procurementPlans    ProcurementPlan[]
+  notes               Note[]
+  tasks               Task[]
+  emails              Email[]
+  meetings            Meeting[]
+  interactions        Interaction[]
+  consultantLinks     ConsultantProject[]
+  watchItems          WatchItem[]
+
+  @@map("projects")
+}
+
+// ---------------------------------------------------------------------------
+// APPELS D'OFFRES
+// ---------------------------------------------------------------------------
+
+enum TenderStatus {
+  DRAFT
+  PUBLISHED
+  UNDER_EVALUATION
+  AWARDED
+  CANCELLED
+}
+
+model Tender {
+  id                 String        @id @default(uuid())
+  projectId          String
+  project            Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  reference          String?
+  title              String
+  summary            String?
+  budgetEstimate     Decimal?      @db.Decimal(18, 2)
+  publicationDate    DateTime?
+  submissionDeadline DateTime?
+  status             TenderStatus  @default(PUBLISHED)
+  officialUrl        String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  documents          Document[]
+
+  @@map("tenders")
+}
+
+// ---------------------------------------------------------------------------
+// FINANCEMENTS
+// ---------------------------------------------------------------------------
+
+model Funding {
+  id              String        @id @default(uuid())
+  projectId       String
+  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  organizationId  String
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  amount          Decimal?      @db.Decimal(18, 2)
+  currency        String?       @default("USD")
+  instrumentType  String?       // ex: prêt, don, garantie
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("funding")
+}
+
+// ---------------------------------------------------------------------------
+// ENTREPRISES
+// ---------------------------------------------------------------------------
+
+model Company {
+  id                  String   @id @default(uuid())
+  name                String
+  country             String?
+  website             String?
+  sector              String?
+  description         String?
+  africaHistory       String?
+  mozambiqueHistory   String?
+  rating              Int?     // 1 a 5
+  comments            String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  contacts            Contact[]
+  decisionMakers      DecisionMaker[]
+  wonProjects         CompanyWonProject[]
+  matches             ProjectCompanyMatch[]
+  crmRecords          CRM[]
+  tasks               Task[]
+  notes               Note[]
+  documents           Document[]
+  emails              Email[]
+  meetings            Meeting[]
+
+  @@map("companies")
+}
+
+model CompanyWonProject {
+  id          String   @id @default(uuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  projectName String
+  year        Int?
+  value       Decimal? @db.Decimal(18, 2)
+  role        String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@map("company_won_projects")
+}
+
+model Contact {
+  id         String   @id @default(uuid())
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  fullName   String
+  role       String?
+  email      String?
+  phone      String?
+  linkedin   String?
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("contacts")
+}
+
+// ---------------------------------------------------------------------------
+// DECIDEURS
+// ---------------------------------------------------------------------------
+
+model DecisionMaker {
+  id              String    @id @default(uuid())
+  companyId       String
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  fullName        String
+  position        String    // ex: Managing Director Africa, Country Director, Bid Manager...
+  linkedin        String?
+  email           String?
+  phone           String?
+  address         String?
+  country         String?
+  influenceScore  Int?      // 1 a 5
+  canDecide        Boolean   @default(false)
+  comments        String?
+  lastVerifiedAt  DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  projectLinks    ProjectDecisionMaker[]
+  interactions    Interaction[]
+  tasks           Task[]
+  notes           Note[]
+  emails          Email[]
+  meetingAttendees MeetingAttendee[]
+  crmContacted    CRM[]     @relation("CRMContactedPerson")
+
+  @@map("decision_makers")
+}
+
+// Ordre de prospection et role d'un decideur sur un projet donne
+model ProjectDecisionMaker {
+  id              String        @id @default(uuid())
+  projectId       String
+  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  decisionMakerId String
+  decisionMaker   DecisionMaker @relation(fields: [decisionMakerId], references: [id], onDelete: Cascade)
+  contactOrder    Int           @default(1) // ordre de prospection recommande
+  reason          String?
+  createdAt       DateTime      @default(now())
+
+  @@unique([projectId, decisionMakerId])
+  @@map("project_decision_makers")
+}
+
+// ---------------------------------------------------------------------------
+// CONSULTANTS
+// ---------------------------------------------------------------------------
+
+model Consultant {
+  id          String   @id @default(uuid())
+  name        String
+  isFirm      Boolean  @default(false)
+  sector      String?
+  country     String?
+  email       String?
+  phone       String?
+  linkedin    String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projectLinks ConsultantProject[]
+
+  @@map("consultants")
+}
+
+model ConsultantProject {
+  id            String     @id @default(uuid())
+  consultantId  String
+  consultant    Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  projectId     String
+  project       Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  role          String?
+  createdAt     DateTime   @default(now())
+
+  @@unique([consultantId, projectId])
+  @@map("consultant_projects")
+}
+
+// ---------------------------------------------------------------------------
+// PLANS DE PASSATION DE MARCHES
+// ---------------------------------------------------------------------------
+
+model ProcurementPlan {
+  id              String        @id @default(uuid())
+  projectId       String
+  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+  title           String
+  fiscalYear      Int?
+  plannedDate     DateTime?
+  description     String?
+  documentUrl     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("procurement_plans")
+}
+
+// ---------------------------------------------------------------------------
+// CRM
+// ---------------------------------------------------------------------------
+
+enum CRMResult {
+  NO_ANSWER
+  INTERESTED
+  NOT_INTERESTED
+  MEETING_SCHEDULED
+  PARTNERSHIP_AGREED
+  ON_HOLD
+}
+
+model CRM {
+  id                       String     @id @default(uuid())
+  companyId                String
+  company                  Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  ownerId                  String?
+  owner                    User?      @relation(fields: [ownerId], references: [id])
+  lastContactDate          DateTime?
+  contactedPersonId        String?
+  contactedPerson          DecisionMaker? @relation("CRMContactedPerson", fields: [contactedPersonId], references: [id])
+  lastResult               CRMResult?
+  nextFollowUpDate         DateTime?
+  documentsSent            String[]
+  partnershipProbability   Int?       // 0-100
+  comments                 String?
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
+
+  interactions             Interaction[]
+
+  @@map("crm_records")
+}
+
+// ---------------------------------------------------------------------------
+// INTERACTIONS
+// ---------------------------------------------------------------------------
+
+enum InteractionType {
+  CALL
+  EMAIL
+  MEETING
+  LINKEDIN
+  NOTE
+  OTHER
+}
+
+model Interaction {
+  id          String           @id @default(uuid())
+  crmId       String?
+  crm         CRM?             @relation(fields: [crmId], references: [id], onDelete: Cascade)
+  projectId   String?
+  project     Project?         @relation(fields: [projectId], references: [id])
+  decisionMakerId String?
+  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+  type        InteractionType
+  date        DateTime         @default(now())
+  summary     String
+  userId      String?
+  user        User?            @relation(fields: [userId], references: [id])
+  createdAt   DateTime         @default(now())
+
+  @@map("interactions")
+}
+
+// ---------------------------------------------------------------------------
+// TACHES
+// ---------------------------------------------------------------------------
+
+enum TaskType {
+  CALL
+  EMAIL
+  FOLLOW_UP
+  PRESENTATION
+  QUOTE
+  MEETING
+  OTHER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Task {
+  id              String       @id @default(uuid())
+  title           String
+  type            TaskType
+  status          TaskStatus   @default(TODO)
+  priority        TaskPriority @default(MEDIUM)
+  dueDate         DateTime?
+  projectId       String?
+  project         Project?     @relation(fields: [projectId], references: [id])
+  companyId       String?
+  company         Company?     @relation(fields: [companyId], references: [id])
+  decisionMakerId String?
+  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+  assignedToId    String?
+  assignedTo      User?        @relation("TaskAssignee", fields: [assignedToId], references: [id])
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("tasks")
+}
+
+// ---------------------------------------------------------------------------
+// NOTES
+// ---------------------------------------------------------------------------
+
+model Note {
+  id              String    @id @default(uuid())
+  content         String
+  projectId       String?
+  project         Project?  @relation(fields: [projectId], references: [id])
+  companyId       String?
+  company         Company?  @relation(fields: [companyId], references: [id])
+  decisionMakerId String?
+  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+  authorId        String?
+  author          User?     @relation(fields: [authorId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("notes")
+}
+
+// ---------------------------------------------------------------------------
+// EMAILS
+// ---------------------------------------------------------------------------
+
+enum EmailStatus {
+  DRAFT
+  SENT
+  FAILED
+}
+
+model Email {
+  id              String       @id @default(uuid())
+  subject         String
+  body            String
+  templateType    String?
+  projectId       String?
+  project         Project?     @relation(fields: [projectId], references: [id])
+  companyId       String?
+  company         Company?     @relation(fields: [companyId], references: [id])
+  decisionMakerId String?
+  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+  fromUserId      String?
+  fromUser        User?        @relation(fields: [fromUserId], references: [id])
+  status          EmailStatus  @default(DRAFT)
+  sentAt          DateTime?
+  createdAt       DateTime     @default(now())
+
+  @@map("emails")
+}
+
+// ---------------------------------------------------------------------------
+// REUNIONS
+// ---------------------------------------------------------------------------
+
+enum MeetingStatus {
+  SCHEDULED
+  DONE
+  CANCELLED
+}
+
+model Meeting {
+  id            String        @id @default(uuid())
+  title         String
+  projectId     String?
+  project       Project?      @relation(fields: [projectId], references: [id])
+  companyId     String?
+  company       Company?      @relation(fields: [companyId], references: [id])
+  scheduledAt   DateTime
+  durationMinutes Int?        @default(60)
+  location      String?
+  notes         String?
+  status        MeetingStatus @default(SCHEDULED)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  attendees     MeetingAttendee[]
+
+  @@map("meetings")
+}
+
+model MeetingAttendee {
+  id              String         @id @default(uuid())
+  meetingId       String
+  meeting         Meeting        @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  decisionMakerId String?
+  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+  externalName    String?
+  externalEmail   String?
+  createdAt       DateTime       @default(now())
+
+  @@map("meeting_attendees")
+}
+
+// ---------------------------------------------------------------------------
+// DOCUMENTS
+// ---------------------------------------------------------------------------
+
+model Document {
+  id            String   @id @default(uuid())
+  projectId     String?
+  project       Project? @relation(fields: [projectId], references: [id])
+  tenderId      String?
+  tender        Tender?  @relation(fields: [tenderId], references: [id])
+  companyId     String?
+  company       Company? @relation(fields: [companyId], references: [id])
+  title         String
+  fileUrl       String
+  fileType      String?
+  uploadedById  String?
+  uploadedBy    User?    @relation(fields: [uploadedById], references: [id])
+  createdAt     DateTime @default(now())
+
+  @@map("documents")
+}
+
+// ---------------------------------------------------------------------------
+// SOURCES DE VEILLE
+// ---------------------------------------------------------------------------
+
+model Source {
+  id             String        @id @default(uuid())
+  name           String
+  url            String
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  country        String?
+  isActive       Boolean       @default(true)
+  lastCheckedAt  DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  projects       Project[]
+  watchItems     WatchItem[]
+
+  @@map("sources")
+}
+
+enum WatchItemType {
+  NEW_TENDER
+  NEW_FUNDING
+  NEW_DECISION_MAKER
+  NEW_HIRE
+  NEW_CONSULTANT
+  NEW_CONSORTIUM
+}
+
+model WatchItem {
+  id           String        @id @default(uuid())
+  sourceId     String
+  source       Source        @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  type         WatchItemType
+  title        String
+  description  String?
+  url          String?
+  projectId    String?
+  project      Project?      @relation(fields: [projectId], references: [id])
+  detectedAt   DateTime      @default(now())
+  isProcessed  Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+
+  @@map("watch_items")
+}
+
+// ---------------------------------------------------------------------------
+// INTELLIGENCE COMMERCIALE : SCORING ENTREPRISE x PROJET
+// ---------------------------------------------------------------------------
+
+model ProjectCompanyMatch {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  score       Int      // 0 a 100
+  reasons     String[] // explications du score (ex: "A remporte des projets similaires")
+  computedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, companyId])
+  @@map("project_company_matches")
+}
