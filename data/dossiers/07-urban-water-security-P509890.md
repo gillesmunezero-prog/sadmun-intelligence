@@ -129,3 +129,80 @@ appels a manifestation d'interet pour la participation du secteur prive.
 ## 13. Niveau de confiance global
 
 - Donnees factuelles : **Eleve**. Analyse IA : **Moyen**. Cibles/scores : **Faible/Moyen**. Decideurs entreprise : **A qualifier**.
+
+## 14. Mise a jour Sprint 1 bis - Verifications complementaires (organisme d'execution, equipe Banque Mondiale, marches reels)
+
+**Organisme d'execution confirme :** Ministere des Travaux Publics, du Logement et des Ressources en Eau (confirme). FIPAG (Fundo de Investimento e Patrimonio do Abastecimento de Agua) apparait comme acteur operationnel de premier plan dans les avis de passation de marches reels ci-dessous.
+
+**Equipe Banque Mondiale (sources publiques) :**
+
+| Role | Nom | Source | Confiance |
+|---|---|---|---|
+| Task Team Leader | Jaime Palalane | Fiche projet WB | Eleve |
+| Procurement Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Environmental Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Social Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Financial Management Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+
+**Marches / avis reellement publies sur ce projet a ce jour (source : onglet Procurement, projects.worldbank.org, consulte le 11/08/2026 - liste tres active, plus de 20 avis) :**
+
+| Avis (extrait) | Type | Date |
+|---|---|---|
+| Supervision of the Construction of Household Latrines in Quelimane | REOI | 7 aout 2026 |
+| Acquisition and installation of Automatic Water Meters | Invitation for Bids | 29 juillet 2026 |
+| Communication and Image (Re-Branding) | REOI | 27 juillet 2026 |
+| Feasibility Study, Detailed Design... Xai-Xai, Chokwe, Chibuto, Inhambane, Maxixe Water Supply Systems | REOI | 27 juillet 2026 |
+| Financial audit for FIPAG and ROCs | REOI | 29 juin 2026 |
+| Preparation of Master Plan... Angoche, Ilha de Mocambique, Nacala Water Supply Systems | REOI | 29 juin 2026 |
+| Construction of ARA-Sul, IP Headquarters | Invitation for Bids | 26 juin 2026 |
+| Rehabilitation of water supply systems in flood affected cities (Xai Xai, Chokwe, Chibuto, Maxixe - 6 lots) | Invitation for Bids | 21 mai 2026 |
+| Post-flood Rehabilitation of the Maputo Metropolitan Region Water Supply Systems (3 lots) | Invitation for Bids | 7 mai 2026 |
+
+Cette liste tres active (plus de 20 avis en cours) montre un projet en phase operationnelle intense, avec de nombreux lots de travaux, etudes et audits en cours d'appel a la concurrence. **Aucun de ces avis n'a encore atteint le statut "Contract Award" a la date de consultation (11/08/2026)** - tous sont au stade REOI ou Invitation for Bids. C'est une fenetre d'opportunite forte pour se positionner avant les premieres attributions.
+
+## 15. Pourquoi ces entreprises/organisations ?
+
+**FIPAG** - score 75/100 (revalorise). Confirme comme acteur operationnel central via les avis reels (financial audit for FIPAG and ROCs, construction du siege ARA-Sul). C'est l'interlocuteur operationnel principal du secteur eau urbaine au Mozambique.
+
+**Cabinets d'audit (type Ernst & Young, ou autres cabinets locaux/regionaux)** - score 60/100. Un avis reel "Financial audit for FIPAG and ROCs" est actuellement ouvert - opportunite directe et datee.
+
+**Entreprises de travaux hydrauliques/rehabilitation** - score 55/100. Plusieurs lots de rehabilitation post-inondation sont ouverts (Xai-Xai, Chokwe, Chibuto, Maxixe, Maputo metropolitain) - opportunite immediate pour des entreprises de travaux.
+
+## 16. Comment entrer chez eux ?
+
+- **FIPAG** : siege a Maputo (approche directe possible, SADMUN y est deja implante), Direction technique et Direction des marches publics.
+- **Reponse aux avis en cours** : SADMUN peut appuyer des candidats internationaux sur les lots REOI/IFB actuellement ouverts (ci-dessus) en tant que partenaire logistique/administratif local, sans etre soi-meme candidat technique.
+- Portes d'entree transverses : LinkedIn, reunions du Groupe Consultatif Banque Mondiale Mozambique, association mozambicaine des professionnels de l'eau et de l'assainissement.
+
+## 17. SADMUN Value Proposition
+
+Compte tenu du tres grand nombre de lots ouverts simultanement (travaux, etudes, audit, communication) sur plusieurs villes du sud (Maputo, Xai-Xai, Chokwe, Chibuto, Maxixe, Inhambane, Angoche, Ilha de Mocambique, Nacala), SADMUN peut offrir une mobilisation logistique et administrative rapide et multi-sites aux entreprises et bureaux d'etudes qui remporteront ces lots, reduisant leur cout et delai d'installation locale.
+
+## 18. Argumentaire commercial (specifique a ce projet)
+
+"FIPAG a actuellement plus de 20 avis de marches ouverts sur ce projet, couvrant des travaux de rehabilitation post-inondation, des etudes de faisabilite et un audit financier. Que vous soyez en train de repondre a l'un de ces avis ou que vous l'ayez deja remporte, SADMUN peut securiser votre mobilisation locale immediatement, sur n'importe laquelle des villes concernees."
+
+## 19. Preparation de rendez-vous (30 minutes)
+
+**Sujets a aborder :** avis en cours suivis par SADMUN ; villes prioritaires pour le contractant ; besoins de mobilisation immediate.
+
+**Questions a poser :** "A quel(s) avis avez-vous repondu ou envisagez-vous de repondre ?" ; "Avez-vous deja une presence dans les villes concernees (Xai-Xai, Maxixe, Nacala...) ?"
+
+**Documents a montrer :** plaquette SADMUN, cartographie des villes couvertes par le projet.
+
+**Engagements a proposer :** proposition de devis logistique sous 5 jours ouvres, pour n'importe laquelle des villes couvertes par les avis en cours.
+
+## 20. Probabilite de succes
+
+- **Probabilite d'obtenir un rendez-vous :** Elevee (FIPAG deja actif a Maputo ou SADMUN est implante, plus de 20 avis ouverts = besoin operationnel immediat pour les futurs attributaires).
+- **Probabilite de devenir partenaire :** Moyenne a court terme (3-6 mois), compte tenu du volume d'avis en cours.
+- **Probabilite d'obtenir une premiere mission :** Moyenne a Elevee, ce dossier est l'un des plus actifs des 10 suivis en termes de volume de marches reels publies.
+
+*(Estimations qualitatives, non statistiques, mais fondees sur un volume reel d'avis observe superieur aux 9 autres dossiers.)*
+
+## 21. Plan des 30 prochains jours
+
+- **Semaine 1 :** Lister l'integralite des avis actifs sur l'onglet Procurement de P509890 (plus de 20 avis, liste partielle ci-dessus) et prioriser par ville/lot.
+- **Semaine 2 :** Prise de contact directe avec FIPAG (siege Maputo) pour presenter SADMUN comme partenaire logistique multi-villes.
+- **Semaine 3 :** Identifier les cabinets d'audit et bureaux d'etudes ayant manifeste leur interet pour les avis REOI en cours (si information publique disponible).
+- **Semaine 4 :** Bilan du mois, mise a jour du CRM - ce dossier merite un suivi hebdomadaire rapproche compte tenu de son activite.
