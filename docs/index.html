@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SADMUN Intelligence</title>
+<style>
+:root{
+  --bg:#0a0e14; --bg2:#0f1520; --card:#131a26; --card-hover:#182233;
+  --border:#22303f; --text:#e7edf5; --text-dim:#8b98a9; --text-dim2:#5f6c7a;
+  --accent:#2fd6a7; --accent-soft:rgba(47,214,167,.12);
+  --amber:#f0b649; --amber-soft:rgba(240,182,73,.12);
+  --red:#ea5a6d; --red-soft:rgba(234,90,109,.12);
+  --gray:#7c8899; --gray-soft:rgba(124,136,153,.15);
+  --radius:14px; --radius-sm:8px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:radial-gradient(1200px 800px at 20% -10%, #101c26 0%, var(--bg) 45%) fixed;
+  color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  font-size:14.5px; line-height:1.55; min-height:100vh;
+}
+a{color:inherit;text-decoration:none;}
+#app{display:flex;min-height:100vh;}
+.sidebar{
+  width:250px;flex:none;background:linear-gradient(180deg,#0d1420,#0a0f18);
+  border-right:1px solid var(--border);padding:22px 16px;position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;gap:4px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px 22px 8px;}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#1a9c78);
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#06110d;font-size:15px;}
+.brand-name{font-weight:700;font-size:15px;letter-spacing:.2px;}
+.brand-sub{font-size:11px;color:var(--text-dim2);margin-top:1px;}
+.nav-section{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim2);
+  padding:16px 10px 6px 10px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);
+  color:var(--text-dim);font-size:13.5px;font-weight:500;cursor:pointer;transition:background .15s,color .15s;}
+.nav-item:hover{background:var(--card-hover);color:var(--text);}
+.nav-item.active{background:var(--accent-soft);color:var(--accent);}
+.nav-ico{width:16px;text-align:center;opacity:.85;}
+.sidebar-foot{margin-top:auto;padding:12px 10px;font-size:11px;color:var(--text-dim2);border-top:1px solid var(--border);}
+.main{flex:1;min-width:0;}
+.topbar{position:sticky;top:0;z-index:5;background:rgba(10,14,20,.85);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;}
+.search-wrap{position:relative;flex:1;max-width:520px;}
+.search-input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);
+  padding:10px 14px 10px 36px;border-radius:10px;font-size:13.5px;outline:none;transition:border-color .15s;}
+.search-input:focus{border-color:var(--accent);}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-dim2);font-size:13px;}
+.search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.45);
+  max-height:360px;overflow-y:auto;z-index:20;}
+.search-result-item{padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.search-result-item:last-child{border-bottom:none;}
+.search-result-item:hover{background:var(--card-hover);}
+.sr-title{font-size:13px;font-weight:600;}
+.sr-snippet{font-size:11.5px;color:var(--text-dim);margin-top:2px;}
+.sr-type{display:inline-block;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;
+  padding:1px 6px;border-radius:5px;background:var(--accent-soft);color:var(--accent);margin-right:6px;}
+.content{padding:28px 32px 60px 32px;max-width:1180px;margin:0 auto;}
+.page-title{font-size:23px;font-weight:700;margin:0 0 4px 0;}
+.page-sub{color:var(--text-dim);font-size:13.5px;margin:0 0 26px 0;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px;}
+.kpi-num{font-size:26px;font-weight:800;color:var(--accent);}
+.kpi-label{font-size:12px;color:var(--text-dim);margin-top:4px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;
+  cursor:pointer;transition:transform .15s,border-color .15s,background .15s;position:relative;}
+.card:hover{transform:translateY(-2px);border-color:#2c3c4e;background:var(--card-hover);}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.card-id{font-size:10.5px;color:var(--text-dim2);font-family:monospace;letter-spacing:.03em;}
+.card-title{font-size:15.5px;font-weight:700;margin:6px 0 8px 0;}
+.card-meta{font-size:12px;color:var(--text-dim);margin-bottom:10px;}
+.card-pitch{font-size:12.5px;color:var(--text-dim);line-height:1.5;}
+.tag{display:inline-block;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:100px;letter-spacing:.02em;}
+.tag-green{background:var(--accent-soft);color:var(--accent);}
+.tag-amber{background:var(--amber-soft);color:var(--amber);}
+.tag-red{background:var(--red-soft);color:var(--red);}
+.tag-gray{background:var(--gray-soft);color:var(--gray);}
+.card-foot{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.cmp-check{position:absolute;top:16px;right:16px;width:18px;height:18px;border-radius:5px;
+  border:1.5px solid var(--border);cursor:pointer;}
+.cmp-check.on{background:var(--accent);border-color:var(--accent);}
+.section-h{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim2);
+  margin:34px 0 12px 0;font-weight:700;}
+.detail-head{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px 26px;margin-bottom:20px;}
+.detail-badges{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.detail-title{font-size:22px;font-weight:800;margin:0 0 6px 0;}
+.detail-sub{color:var(--text-dim);font-size:13px;}
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px;}
+.mini-stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;}
+.mini-stat-label{font-size:10.5px;color:var(--text-dim2);text-transform:uppercase;letter-spacing:.04em;}
+.mini-stat-val{font-size:13.5px;font-weight:600;margin-top:3px;}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap;}
+.tab{padding:10px 16px;font-size:13px;font-weight:600;color:var(--text-dim);cursor:pointer;
+  border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-color:var(--accent);}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 22px;margin-bottom:14px;}
+.sec-card h3{font-size:14.5px;margin:0 0 10px 0;color:var(--text);font-weight:700;}
+.sec-card h4{font-size:13px;color:var(--accent);margin:14px 0 6px 0;}
+.sec-card p{margin:0 0 10px 0;color:#c6d0dc;font-size:13px;}
+.ul{margin:0 0 10px 18px;padding:0;color:#c6d0dc;font-size:13px;}
+.ul li{margin-bottom:5px;}
+.table-wrap{overflow-x:auto;margin:10px 0 14px 0;border:1px solid var(--border);border-radius:10px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{background:var(--bg2);text-align:left;padding:9px 12px;color:var(--text-dim);font-weight:600;
+  border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--border);color:#c6d0dc;}
+tr:last-child td{border-bottom:none;}
+.empty{color:var(--text-dim);font-size:13px;padding:40px;text-align:center;}
+.compare-bar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--card);
+  border:1px solid var(--accent);border-radius:100px;padding:10px 10px 10px 20px;display:flex;align-items:center;
+  gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:30;}
+.btn{background:var(--accent);color:#06140f;border:none;padding:9px 18px;border-radius:100px;font-weight:700;
+  font-size:12.5px;cursor:pointer;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:9px 16px;
+  border-radius:100px;font-size:12.5px;cursor:pointer;}
+.modal-bg{position:fixed;inset:0;background:rgba(4,7,11,.72);display:flex;align-items:center;justify-content:center;z-index:50;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;max-width:820px;
+  width:92%;max-height:80vh;overflow-y:auto;}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.crumb{font-size:12px;color:var(--text-dim2);margin-bottom:14px;}
+.crumb span{cursor:pointer;color:var(--text-dim);}
+.crumb span:hover{color:var(--accent);}
+.company-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);
+  padding:5px 12px;border-radius:100px;font-size:12px;margin:4px 6px 4px 0;cursor:pointer;}
+.company-chip:hover{border-color:var(--accent);color:var(--accent);}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:#1c2733;border-radius:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+.fade-in{animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:900px){.sidebar{display:none;}.kpi-row{grid-template-columns:repeat(2,1fr);}.detail-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var RAW_BASE = "https://raw.githubusercontent.com/gillesmunezero-prog/sadmun-intelligence/main/";
+var DOSSIER_DIR = "data/dossiers/";
+var PARTNER_DIR = "data/partners/";
+
+var PROJECTS = [
+  {id:"P516379", file:"01-mozresilience-P516379.md", title:"MozResilience", region:"National", agency:"A qualifier (organisme d'execution non confirme)", priority:"Moyenne", pitch:"Programme de resilience multisectorielle face aux chocs climatiques."},
+  {id:"P514199", file:"02-jobs-social-cohesion-north-P514199.md", title:"Jobs and Social Cohesion in the North", region:"Nord (Cabo Delgado / Nampula)", agency:"A qualifier (REOI publiees, PIU en cours de constitution)", priority:"Moyenne", pitch:"Emploi et cohesion sociale dans les provinces du nord affectees par l'insecurite."},
+  {id:"P512650", file:"03-rural-water-security-P512650.md", title:"Rural Water Security", region:"Zones rurales", agency:"A qualifier (hypothese FIPAG / AIAS non confirmee)", priority:"Moyenne", pitch:"Securisation de l'acces a l'eau en milieu rural."},
+  {id:"P512418", file:"04-clean-energy-transformation-P512418.md", title:"Clean Energy Access Transformation", region:"National", agency:"A qualifier (hypothese EDM / MIREME non confirmee pour ce projet)", priority:"Moyenne", pitch:"Transformation de l'acces a l'energie propre."},
+  {id:"P510427", file:"05-tracer-transport-corridors-P510427.md", title:"TRACER - Transport Corridors", region:"Nampula et corridors nord", agency:"A qualifier (PIU Nampula en recrutement)", priority:"Moyenne", pitch:"Corridors de transport et resilience economique regionale."},
+  {id:"P510159", file:"06-northern-urban-development-P510159.md", title:"Northern Urban Development", region:"Villes du nord", agency:"A qualifier (aucun avis de marche identifie)", priority:"Faible", pitch:"Developpement urbain dans les villes secondaires du nord."},
+  {id:"P509890", file:"07-urban-water-security-P509890.md", title:"Urban Water Security", region:"Maputo, Xai-Xai, Nacala, Angoche...", agency:"FIPAG (confirme)", priority:"Haute", pitch:"Securite de l'eau urbaine - plus de 20 avis de marche actifs identifies."},
+  {id:"P511558", file:"08-health-emergency-preparedness-P511558.md", title:"Health Emergency Preparedness (MZ HEPRR)", region:"National", agency:"Ministere de la Sante / agences ONU (UNFPA, UNICEF)", priority:"Faible", pitch:"Preparation aux urgences sanitaires - achats routes via agences ONU."},
+  {id:"P500488", file:"09-climate-resilient-roads-north-P500488.md", title:"Climate Resilient Roads for the North", region:"Cabo Delgado, Niassa, Nampula", agency:"ANE - Administracao Nacional de Estradas (confirme)", priority:"Haute", pitch:"Routes et ouvrages d'art resilients - le dossier le plus riche en donnees reelles."},
+  {id:"P179797", file:"10-green-energy-corridors-P179797.md", title:"Green Energy Corridors", region:"National", agency:"EDM - Electricidade de Mocambique (confirme via reference contrat)", priority:"Haute", pitch:"Corridors d'energie verte - marches d'audit et d'ingenierie deja attribues."}
+];
+
+var PARTNERS = [
+  {slug:"crbc", file:"01-china-road-bridge-corporation.md", name:"China Road and Bridge Corporation (CRBC)", country:"Chine (filiale de CCCC)", sector:"Infrastructures routieres / ouvrages d'art", related:"P500488", confidence:"Eleve"}
+];
+
+var CACHE = {};
+var COMPARE = {};
+
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function inline(text){
+  var t = esc(text);
+  t = t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  t = t.replace(/A qualifier/gi, "<span class=\"tag tag-gray\">A qualifier</span>");
+  t = t.replace(/Verifie(?!e)/g, "<span class=\"tag tag-green\">Verifie</span>");
+  t = t.replace(/Eleve/g, "<span class=\"tag tag-green\">Eleve</span>");
+  t = t.replace(/Moyen(?!ne)/g, "<span class=\"tag tag-amber\">Moyen</span>");
+  t = t.replace(/Faible/g, "<span class=\"tag tag-red\">Faible</span>");
+  return t;
+}
+
+function priorityTag(p){
+  var cls = p === "Haute" ? "tag-green" : (p === "Moyenne" ? "tag-amber" : "tag-gray");
+  return "<span class=\"tag " + cls + "\">Priorite " + p + "</span>";
+}
+function confTag(c){
+  var cls = c === "Eleve" ? "tag-green" : (c === "Moyen" ? "tag-amber" : "tag-gray");
+  return "<span class=\"tag " + cls + "\">Confiance " + c + "</span>";
+}
+
+function parseMd(md){
+  var lines = md.split("\n");
+  var title = "";
+  var sections = [];
+  var current = null;
+  var intro = [];
+  for(var i=0;i<lines.length;i++){
+    var line = lines[i];
+    var m1 = line.match(/^#\s+(.*)/);
+    if(m1 && !title){ title = m1[1].trim(); continue; }
+    var m2 = line.match(/^##\s+(.*)/);
+    if(m2){
+      if(current) sections.push(current);
+      current = {heading: m2[1].trim(), lines: []};
+      continue;
+    }
+    if(current){ current.lines.push(line); }
+    else { intro.push(line); }
+  }
+  if(current) sections.push(current);
+  return {title:title, sections:sections, intro:intro.join("\n").trim()};
+}
+
+function renderTable(tableLines){
+  var rows = [];
+  for(var i=0;i<tableLines.length;i++){
+    var l = tableLines[i].trim();
+    if(/^\|?[\s\-:\|]+\|?$/.test(l)) continue;
+    var cells = l.replace(/^\|/,"").replace(/\|$/,"").split("|").map(function(c){return c.trim();});
+    rows.push(cells);
+  }
+  if(rows.length===0) return "";
+  var html = "<div class=\"table-wrap\"><table><thead><tr>";
+  for(var c=0;c<rows[0].length;c++){ html += "<th>" + inline(rows[0][c]) + "</th>"; }
+  html += "</tr></thead><tbody>";
+  for(var r=1;r<rows.length;r++){
+    html += "<tr>";
+    for(var c2=0;c2<rows[r].length;c2++){ html += "<td>" + inline(rows[r][c2]) + "</td>"; }
+    html += "</tr>";
+  }
+  html += "</tbody></table></div>";
+  return html;
+}
+
+function renderBody(lines){
+  var html = "";
+  var i = 0;
+  while(i < lines.length){
+    var line = lines[i];
+    if(line.trim() === ""){ i++; continue; }
+    if(line.trim().indexOf("|") === 0){
+      var tbl = [];
+      while(i < lines.length && lines[i].trim().indexOf("|") === 0){ tbl.push(lines[i]); i++; }
+      html += renderTable(tbl);
+      continue;
+    }
+    if(/^-\s+/.test(line.trim())){
+      var items = [];
+      while(i < lines.length && /^-\s+/.test(lines[i].trim())){ items.push(lines[i].trim().replace(/^-\s+/, "")); i++; }
+      html += "<ul class=\"ul\">" + items.map(function(it){ return "<li>" + inline(it) + "</li>"; }).join("") + "</ul>";
+      continue;
+    }
+    if(/^###\s+/.test(line.trim())){
+      html += "<h4>" + inline(line.trim().replace(/^###\s+/, "")) + "</h4>";
+      i++; continue;
+    }
+    var para = [line];
+    i++;
+    while(i < lines.length && lines[i].trim() !== "" && lines[i].trim().indexOf("|") !== 0 && !/^-\s+/.test(lines[i].trim()) && !/^###\s+/.test(lines[i].trim())){
+      para.push(lines[i]); i++;
+    }
+    html += "<p>" + inline(para.join(" ")) + "</p>";
+  }
+  return html;
+}
+
+function groupLabel(heading){
+  var h = heading.toLowerCase();
+  if(/(readiness|crm|plan des|plan d.action|plan 30|plan 90|checklist|prochaine action|semaine)/.test(h)) return "Plan d'action";
+  if(/(source|tracabilite|niveau de confiance|verification)/.test(h)) return "Sources et fiabilite";
+  if(/(entreprise|argumentaire|value proposition|comment entrer|pourquoi cette|rendez-vous|probabilite|objection|reponse|contact|canaux|interlocuteur|strategie)/.test(h)) return "Strategie commerciale";
+  return "Vue d'ensemble";
+}
+
+function groupSections(sections){
+  var order = ["Vue d'ensemble","Strategie commerciale","Plan d'action","Sources et fiabilite"];
+  var buckets = {};
+  order.forEach(function(o){ buckets[o] = []; });
+  sections.forEach(function(s){
+    var g = groupLabel(s.heading);
+    if(!buckets[g]) buckets[g] = [];
+    buckets[g].push(s);
+  });
+  return order.filter(function(o){ return buckets[o].length > 0; }).map(function(o){ return {label:o, items:buckets[o]}; });
+}
+
+function fetchText(path){
+  if(CACHE[path]) return Promise.resolve(CACHE[path]);
+  return fetch(RAW_BASE + path).then(function(r){ return r.text(); }).then(function(t){ CACHE[path] = t; return t; });
+}
+
+function prefetchAll(){
+  var all = PROJECTS.map(function(p){ return DOSSIER_DIR + p.file; }).concat(PARTNERS.map(function(p){ return PARTNER_DIR + p.file; }));
+  all.forEach(function(path){ fetchText(path).catch(function(){}); });
+}
+
+function layout(activeHash){
+  var navItems = [
+    {h:"#/dashboard", ico:"&#9673;", label:"Dashboard"},
+    {h:"#/projects", ico:"&#9673;", label:"Projets (" + PROJECTS.length + ")"},
+    {h:"#/partners", ico:"&#9673;", label:"Entreprises"}
+  ];
+  var nav = navItems.map(function(n){
+    var cls = "nav-item" + (activeHash === n.h ? " active" : "");
+    return "<div class=\"" + cls + "\" onclick=\"location.hash='" + n.h + "'\"><span class=\"nav-ico\">&#9670;</span>" + n.label + "</div>";
+  }).join("");
+  return "<div class=\"sidebar\">" +
+    "<div class=\"brand\"><div class=\"brand-mark\">S</div><div><div class=\"brand-name\">SADMUN Intelligence</div><div class=\"brand-sub\">Mozambique</div></div></div>" +
+    "<div class=\"nav-section\">Navigation</div>" + nav +
+    "<div class=\"sidebar-foot\">Sprint 1 &mdash; 10 dossiers commerciaux<br>Donnees verifiees World Bank Procurement</div>" +
+    "</div>" +
+    "<div class=\"main\">" +
+    "<div class=\"topbar\"><div class=\"search-wrap\">" +
+    "<span class=\"search-ico\">&#8981;</span>" +
+    "<input class=\"search-input\" id=\"searchInput\" placeholder=\"Rechercher un projet, une entreprise, un mot-cle...\" oninput=\"onSearch(this.value)\" onfocus=\"onSearch(this.value)\">" +
+    "<div id=\"searchResults\"></div>" +
+    "</div></div>" +
+    "<div class=\"content\" id=\"main\"></div>" +
+    "</div>";
+}
+
+function route(){
+  var hash = location.hash || "#/dashboard";
+  var app = document.getElementById("app");
+  var navHash = "#/dashboard";
+  if(hash.indexOf("#/projects") === 0 && hash.indexOf("#/project/") !== 0) navHash = "#/projects";
+  else if(hash.indexOf("#/partners") === 0 && hash.indexOf("#/partner/") !== 0) navHash = "#/partners";
+  app.innerHTML = layout(navHash);
+  var main = document.getElementById("main");
+  if(hash.indexOf("#/project/") === 0){
+    renderProjectDetail(main, decodeURIComponent(hash.split("/")[2]));
+  } else if(hash.indexOf("#/partner/") === 0){
+    renderPartnerDetail(main, decodeURIComponent(hash.split("/")[2]));
+  } else if(hash === "#/projects"){
+    renderProjectsGrid(main);
+  } else if(hash === "#/partners"){
+    renderPartnersGrid(main);
+  } else {
+    renderDashboard(main);
+  }
+  renderCompareBar();
+}
+
+function renderDashboard(main){
+  var high = PROJECTS.filter(function(p){ return p.priority === "Haute"; }).length;
+  var verified = PROJECTS.filter(function(p){ return p.agency.indexOf("confirme") !== -1; }).length;
+  main.innerHTML =
+    "<div class=\"fade-in\">" +
+    "<h1 class=\"page-title\">Bonjour Gilles</h1>" +
+    "<p class=\"page-sub\">Vue d'ensemble des opportunites commerciales identifiees au Mozambique.</p>" +
+    "<div class=\"kpi-row\">" +
+    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + PROJECTS.length + "</div><div class=\"kpi-label\">Projets analyses (Sprint 1)</div></div>" +
+    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + verified + "</div><div class=\"kpi-label\">Organismes d'execution confirmes</div></div>" +
+    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + high + "</div><div class=\"kpi-label\">Projets a priorite haute</div></div>" +
+    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + PARTNERS.length + "</div><div class=\"kpi-label\">Fiches entreprises qualifiees</div></div>" +
+    "</div>" +
+    "<div class=\"section-h\">Projets prioritaires</div>" +
+    "<div class=\"grid\">" + PROJECTS.filter(function(p){return p.priority==="Haute";}).map(projectCard).join("") + "</div>" +
+    "<div class=\"section-h\">Tous les projets</div>" +
+    "<div class=\"grid\">" + PROJECTS.map(projectCard).join("") + "</div>" +
+    "</div>";
+}
+
+function projectCard(p){
+  var checked = COMPARE[p.id] ? " on" : "";
+  return "<div class=\"card\" onclick=\"location.hash='#/project/" + p.id + "'\">" +
+    "<div class=\"cmp-check" + checked + "\" onclick=\"event.stopPropagation();toggleCompare('" + p.id + "')\" title=\"Comparer\"></div>" +
+    "<div class=\"card-top\"><span class=\"card-id\">" + p.id + "</span></div>" +
+    "<div class=\"card-title\">" + esc(p.title) + "</div>" +
+    "<div class=\"card-meta\">" + esc(p.region) + "</div>" +
+    "<div class=\"card-pitch\">" + esc(p.pitch) + "</div>" +
+    "<div class=\"card-foot\">" + priorityTag(p.priority) + "</div>" +
+    "</div>";
+}
+
+function renderProjectsGrid(main){
+  main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Projets</h1><p class=\"page-sub\">" + PROJECTS.length + " dossiers commerciaux complets, construits a partir de sources publiques verifiables.</p>" +
+    "<div class=\"grid\">" + PROJECTS.map(projectCard).join("") + "</div></div>";
+}
+
+function partnerCard(p){
+  return "<div class=\"card\" onclick=\"location.hash='#/partner/" + p.slug + "'\">" +
+    "<div class=\"card-top\"><span class=\"card-id\">" + esc(p.related) + "</span></div>" +
+    "<div class=\"card-title\">" + esc(p.name) + "</div>" +
+    "<div class=\"card-meta\">" + esc(p.country) + "</div>" +
+    "<div class=\"card-pitch\">" + esc(p.sector) + "</div>" +
+    "<div class=\"card-foot\">" + confTag(p.confidence) + "</div>" +
+    "</div>";
+}
+
+function renderPartnersGrid(main){
+  main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Entreprises (Partner Intelligence)</h1>" +
+    "<p class=\"page-sub\">Fiches construites uniquement a partir de sources publiques verifiables (World Bank Procurement, disclosures officielles).</p>" +
+    "<div class=\"grid\">" + PARTNERS.map(partnerCard).join("") + "</div></div>";
+}
+
+var CURRENT_GROUPS = [];
+var CURRENT_TAB = 0;
+
+function renderDetailSkeleton(main, crumbLabel, crumbHash){
+  main.innerHTML = "<div class=\"crumb\"><span onclick=\"location.hash='" + crumbHash + "'\">" + crumbLabel + "</span> / chargement...</div><div class=\"empty\">Chargement du dossier...</div>";
+}
+
+function renderProjectDetail(main, id){
+  var proj = PROJECTS.filter(function(p){ return p.id === id; })[0];
+  if(!proj){ main.innerHTML = "<div class=\"empty\">Projet introuvable.</div>"; return; }
+  renderDetailSkeleton(main, "Projets", "#/projects");
+  fetchText(DOSSIER_DIR + proj.file).then(function(md){
+    var parsed = parseMd(md);
+    CURRENT_GROUPS = groupSections(parsed.sections);
+    CURRENT_TAB = 0;
+    drawProjectDetail(main, proj, parsed);
+  }).catch(function(err){
+    main.innerHTML = "<div class=\"empty\">Erreur de chargement du dossier (" + esc(String(err)) + ").</div>";
+  });
+}
+
+function drawProjectDetail(main, proj, parsed){
+  var tabsHtml = CURRENT_GROUPS.map(function(g, idx){
+    var cls = "tab" + (idx === CURRENT_TAB ? " active" : "");
+    return "<div class=\"" + cls + "\" onclick=\"selectTab(" + idx + ")\">" + g.label + "</div>";
+  }).join("");
+  var body = CURRENT_GROUPS.length ? CURRENT_GROUPS[CURRENT_TAB].items.map(function(s){
+    return "<div class=\"sec-card\"><h3>" + esc(s.heading) + "</h3>" + renderBody(s.lines) + "</div>";
+  }).join("") : "<div class=\"empty\">Aucun contenu.</div>";
+  main.innerHTML =
+    "<div class=\"fade-in\">" +
+    "<div class=\"crumb\"><span onclick=\"location.hash='#/projects'\">Projets</span> / " + esc(proj.title) + "</div>" +
+    "<div class=\"detail-head\">" +
+    "<div class=\"detail-badges\">" + priorityTag(proj.priority) + "<span class=\"tag tag-gray\">" + esc(proj.id) + "</span></div>" +
+    "<div class=\"detail-title\">" + esc(parsed.title || proj.title) + "</div>" +
+    "<div class=\"detail-sub\">" + esc(proj.pitch) + "</div>" +
+    "<div class=\"detail-grid\">" +
+    "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Region</div><div class=\"mini-stat-val\">" + esc(proj.region) + "</div></div>" +
+    "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Organisme d'execution</div><div class=\"mini-stat-val\">" + inline(proj.agency) + "</div></div>" +
+    "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Identifiant projet</div><div class=\"mini-stat-val\">" + esc(proj.id) + "</div></div>" +
+    "</div></div>" +
+    "<div class=\"tabs\">" + tabsHtml + "</div>" +
+    "<div id=\"tabBody\">" + body + "</div>" +
+    "</div>";
+}
+
+function selectTab(idx){
+  CURRENT_TAB = idx;
+  var main = document.getElementById("main");
+  var hash = location.hash;
+  var id = decodeURIComponent(hash.split("/")[2]);
+  var proj = PROJECTS.filter(function(p){ return p.id === id; })[0];
+  fetchText(DOSSIER_DIR + proj.file).then(function(md){
+    drawProjectDetail(main, proj, parseMd(md));
+  });
+}
+
+function renderPartnerDetail(main, slug){
+  var p = PARTNERS.filter(function(x){ return x.slug === slug; })[0];
+  if(!p){ main.innerHTML = "<div class=\"empty\">Entreprise introuvable.</div>"; return; }
+  renderDetailSkeleton(main, "Entreprises", "#/partners");
+  fetchText(PARTNER_DIR + p.file).then(function(md){
+    var parsed = parseMd(md);
+    CURRENT_GROUPS = groupSections(parsed.sections);
+    CURRENT_TAB = 0;
+    drawPartnerDetail(main, p, parsed);
+  }).catch(function(err){
+    main.innerHTML = "<div class=\"empty\">Erreur de chargement (" + esc(String(err)) + ").</div>";
+  });
+}
+
+function drawPartnerDetail(main, p, parsed){
+  var tabsHtml = CURRENT_GROUPS.map(function(g, idx){
+    var cls = "tab" + (idx === CURRENT_TAB ? " active" : "");
+    return "<div class=\"" + cls + "\" onclick=\"selectPartnerTab(" + idx + ")\">" + g.label + "</div>";
+  }).join("");
+  var body = CURRENT_GROUPS.length ? CURRENT_GROUPS[CURRENT_TAB].items.map(function(s){
+    return "<div class=\"sec-card\"><h3>" + esc(s.heading) + "</h3>" + renderBody(s.lines) + "</div>";
+  }).join("") : "<div class=\"empty\">Aucun contenu.</div>";
+  var relProj = PROJECTS.filter(function(x){ return x.id === p.related; })[0];
+  main.innerHTML =
+    "<div class=\"fade-in\">" +
+    "<div class=\"crumb\"><span onclick=\"location.hash='#/partners'\">Entreprises</span> / " + esc(p.name) + "</div>" +
+    "<div class=\"detail-head\">" +
+    "<div class=\"detail-badges\">" + confTag(p.confidence) + "</div>" +
+    "<div class=\"detail-title\">" + esc(parsed.title || p.name) + "</div>" +
+    "<div class=\"detail-sub\">" + esc(p.sector) + "</div>" +
+    "<div class=\"detail-grid\">" +
+    "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Pays</div><div class=\"mini-stat-val\">" + esc(p.country) + "</div></div>" +
+    "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Projet lie</div><div class=\"mini-stat-val\">" + (relProj ? "<span class=\"company-chip\" onclick=\"location.hash=&quot;#/project/" + relProj.id + "&quot;\">" + esc(relProj.title) + "</span>" : esc(p.related)) + "</div></div>" +
+    "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Niveau de confiance</div><div class=\"mini-stat-val\">" + inline(p.confidence) + "</div></div>" +
+    "</div></div>" +
+    "<div class=\"tabs\">" + tabsHtml + "</div>" +
+    "<div id=\"tabBody\">" + body + "</div>" +
+    "</div>";
+}
+
+function selectPartnerTab(idx){
+  CURRENT_TAB = idx;
+  var main = document.getElementById("main");
+  var slug = decodeURIComponent(location.hash.split("/")[2]);
+  var p = PARTNERS.filter(function(x){ return x.slug === slug; })[0];
+  fetchText(PARTNER_DIR + p.file).then(function(md){
+    drawPartnerDetail(main, p, parseMd(md));
+  });
+}
+
+function snippet(text, q){
+  var idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if(idx === -1) return text.slice(0, 90) + "...";
+  var start = Math.max(0, idx - 40);
+  return (start > 0 ? "..." : "") + text.slice(start, idx + q.length + 50) + "...";
+}
+
+function onSearch(q){
+  var box = document.getElementById("searchResults");
+  if(!q || q.trim().length < 2){ box.innerHTML = ""; box.className=""; return; }
+  q = q.trim();
+  var results = [];
+  PROJECTS.forEach(function(p){
+    var text = CACHE[DOSSIER_DIR + p.file] || "";
+    var hay = (p.title + " " + p.pitch + " " + p.region + " " + text).toLowerCase();
+    if(hay.indexOf(q.toLowerCase()) !== -1){
+      results.push({type:"Projet", label:p.title, hash:"#/project/" + p.id, snip: text ? snippet(text, q) : p.pitch});
+    }
+  });
+  PARTNERS.forEach(function(p){
+    var text = CACHE[PARTNER_DIR + p.file] || "";
+    var hay = (p.name + " " + p.sector + " " + p.country + " " + text).toLowerCase();
+    if(hay.indexOf(q.toLowerCase()) !== -1){
+      results.push({type:"Entreprise", label:p.name, hash:"#/partner/" + p.slug, snip: text ? snippet(text, q) : p.sector});
+    }
+  });
+  if(results.length === 0){
+    box.className = "search-results";
+    box.innerHTML = "<div class=\"search-result-item\"><div class=\"sr-snippet\">Aucun resultat pour \"" + esc(q) + "\"</div></div>";
+    return;
+  }
+  box.className = "search-results";
+  box.innerHTML = results.slice(0, 12).map(function(r){
+    return "<div class=\"search-result-item\" onclick=\"location.hash='" + r.hash + "';clearSearch();\">" +
+      "<div class=\"sr-title\"><span class=\"sr-type\">" + r.type + "</span>" + esc(r.label) + "</div>" +
+      "<div class=\"sr-snippet\">" + esc(r.snip) + "</div></div>";
+  }).join("");
+}
+
+function clearSearch(){
+  var input = document.getElementById("searchInput");
+  if(input) input.value = "";
+  var box = document.getElementById("searchResults");
+  if(box){ box.innerHTML = ""; box.className = ""; }
+}
+
+document.addEventListener("click", function(e){
+  var wrap = document.querySelector(".search-wrap");
+  if(wrap && !wrap.contains(e.target)) clearSearch();
+});
+
+function toggleCompare(id){
+  if(COMPARE[id]) delete COMPARE[id]; else COMPARE[id] = true;
+  route();
+}
+
+function renderCompareBar(){
+  var ids = Object.keys(COMPARE);
+  var existing = document.getElementById("compareBar");
+  if(existing) existing.remove();
+  if(ids.length < 2) return;
+  var bar = document.createElement("div");
+  bar.id = "compareBar";
+  bar.className = "compare-bar";
+  bar.innerHTML = "<span style=\"font-size:12.5px;color:var(--text-dim);\">" + ids.length + " projets selectionnes</span>" +
+    "<button class=\"btn\" onclick=\"showCompareModal()\">Comparer</button>" +
+    "<button class=\"btn-ghost\" onclick=\"COMPARE={};route();\">Annuler</button>";
+  document.body.appendChild(bar);
+}
+
+function showCompareModal(){
+  var ids = Object.keys(COMPARE);
+  var projs = PROJECTS.filter(function(p){ return ids.indexOf(p.id) !== -1; });
+  var rows = [
+    {label:"Priorite", get:function(p){ return p.priority; }},
+    {label:"Organisme d'execution", get:function(p){ return p.agency; }},
+    {label:"Region", get:function(p){ return p.region; }},
+    {label:"Identifiant", get:function(p){ return p.id; }}
+  ];
+  var html = "<table><thead><tr><th></th>" + projs.map(function(p){ return "<th>" + esc(p.title) + "</th>"; }).join("") + "</tr></thead><tbody>";
+  rows.forEach(function(r){
+    html += "<tr><td><strong>" + r.label + "</strong></td>" + projs.map(function(p){ return "<td>" + inline(r.get(p)) + "</td>"; }).join("") + "</tr>";
+  });
+  html += "</tbody></table>";
+  var bg = document.createElement("div");
+  bg.className = "modal-bg";
+  bg.onclick = function(e){ if(e.target === bg) bg.remove(); };
+  bg.innerHTML = "<div class=\"modal\"><div class=\"modal-head\"><h2 style=\"margin:0;font-size:17px;\">Comparaison de projets</h2>" +
+    "<button class=\"btn-ghost\" onclick=\"this.closest('.modal-bg').remove()\">Fermer</button></div>" +
+    "<div class=\"table-wrap\">" + html + "</div></div>";
+  document.body.appendChild(bg);
+}
+
+window.addEventListener("hashchange", route);
+window.addEventListener("DOMContentLoaded", function(){ route(); prefetchAll(); });
+if(document.readyState !== "loading"){ route(); prefetchAll(); }
+</script>\n</body>\n</html>\n
