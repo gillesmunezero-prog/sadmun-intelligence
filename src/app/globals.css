@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ajustements globaux minimalistes : le design system detaille vit dans les
+   composants Tailwind (voir src/components/ui). */
+html {
+  scroll-behavior: smooth;
+}
