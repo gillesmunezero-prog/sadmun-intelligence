@@ -39,6 +39,7 @@ a{color:inherit;text-decoration:none;}
   color:var(--text-dim);font-size:13.5px;font-weight:500;cursor:pointer;transition:background .15s,color .15s;}
 .nav-item:hover{background:var(--card-hover);color:var(--text);}
 .nav-item.active{background:var(--accent-soft);color:var(--accent);}
+.nav-item.primary{font-weight:700;}
 .nav-ico{width:16px;text-align:center;opacity:.85;}
 .sidebar-foot{margin-top:auto;padding:12px 10px;font-size:11px;color:var(--text-dim2);border-top:1px solid var(--border);}
 .main{flex:1;min-width:0;}
@@ -59,14 +60,14 @@ a{color:inherit;text-decoration:none;}
 .sr-snippet{font-size:11.5px;color:var(--text-dim);margin-top:2px;}
 .sr-type{display:inline-block;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;
   padding:1px 6px;border-radius:5px;background:var(--accent-soft);color:var(--accent);margin-right:6px;}
-.content{padding:28px 32px 60px 32px;max-width:1180px;margin:0 auto;}
+.content{padding:28px 32px 60px 32px;max-width:1220px;margin:0 auto;}
 .page-title{font-size:23px;font-weight:700;margin:0 0 4px 0;}
 .page-sub{color:var(--text-dim);font-size:13.5px;margin:0 0 26px 0;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
 .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px;}
 .kpi-num{font-size:26px;font-weight:800;color:var(--accent);}
 .kpi-label{font-size:12px;color:var(--text-dim);margin-top:4px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;
   cursor:pointer;transition:transform .15s,border-color .15s,background .15s;position:relative;}
 .card:hover{transform:translateY(-2px);border-color:#2c3c4e;background:var(--card-hover);}
@@ -113,7 +114,17 @@ th{background:var(--bg2);text-align:left;padding:9px 12px;color:var(--text-dim);
   border-bottom:1px solid var(--border);white-space:nowrap;}
 td{padding:9px 12px;border-bottom:1px solid var(--border);color:#c6d0dc;}
 tr:last-child td{border-bottom:none;}
+tr.rank-row{cursor:pointer;}
+tr.rank-row:hover td{background:var(--card-hover);}
+.rank-num{display:inline-flex;width:22px;height:22px;border-radius:6px;background:var(--bg2);
+  align-items:center;justify-content:center;font-weight:700;font-size:11.5px;color:var(--text-dim);}
+.rank-num.top3{background:var(--accent-soft);color:var(--accent);}
 .empty{color:var(--text-dim);font-size:13px;padding:40px;text-align:center;}
+.region-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.rtab{padding:8px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;
+  background:var(--card);border:1px solid var(--border);color:var(--text-dim);}
+.rtab:hover{color:var(--text);}
+.rtab.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);}
 .compare-bar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--card);
   border:1px solid var(--accent);border-radius:100px;padding:10px 10px 10px 20px;display:flex;align-items:center;
   gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:30;}
@@ -131,6 +142,8 @@ tr:last-child td{border-bottom:none;}
 .company-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);
   padding:5px 12px;border-radius:100px;font-size:12px;margin:4px 6px 4px 0;cursor:pointer;}
 .company-chip:hover{border-color:var(--accent);color:var(--accent);}
+.note-box{background:var(--bg2);border:1px dashed var(--border);border-radius:12px;padding:16px 18px;
+  color:var(--text-dim);font-size:12.5px;margin-bottom:16px;}
 ::-webkit-scrollbar{width:10px;height:10px;}
 ::-webkit-scrollbar-thumb{background:#1c2733;border-radius:6px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -145,6 +158,7 @@ tr:last-child td{border-bottom:none;}
 var RAW_BASE = "https://raw.githubusercontent.com/gillesmunezero-prog/sadmun-intelligence/main/";
 var DOSSIER_DIR = "data/dossiers/";
 var PARTNER_DIR = "data/partners/";
+var COMPANY_FILE = "data/companies/00-registre-europe-phase1.md";
 
 var PROJECTS = [
   {id:"P516379", file:"01-mozresilience-P516379.md", title:"MozResilience", region:"National", agency:"A qualifier (organisme d'execution non confirme)", priority:"Moyenne", pitch:"Programme de resilience multisectorielle face aux chocs climatiques."},
@@ -160,11 +174,12 @@ var PROJECTS = [
 ];
 
 var PARTNERS = [
-  {slug:"crbc", file:"01-china-road-bridge-corporation.md", name:"China Road and Bridge Corporation (CRBC)", country:"Chine (filiale de CCCC)", sector:"Infrastructures routieres / ouvrages d'art", related:"P500488", confidence:"Eleve"}
+  {slug:"crbc", file:"01-china-road-bridge-corporation.md", name:"China Road and Bridge Corporation (CRBC)", country:"Chine (filiale de CCCC)", sector:"Infrastructures routieres / ouvrages d'art", related:"P500488", confidence:"Eleve", region:"Asie"}
 ];
 
 var CACHE = {};
 var COMPARE = {};
+var COMPANIES = null;
 
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
@@ -172,6 +187,8 @@ function inline(text){
   var t = esc(text);
   t = t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   t = t.replace(/A qualifier/gi, "<span class=\"tag tag-gray\">A qualifier</span>");
+  t = t.replace(/Confirmee/g, "<span class=\"tag tag-green\">Confirmee</span>");
+  t = t.replace(/Probable/g, "<span class=\"tag tag-amber\">Probable</span>");
   t = t.replace(/Verifie(?!e)/g, "<span class=\"tag tag-green\">Verifie</span>");
   t = t.replace(/Eleve/g, "<span class=\"tag tag-green\">Eleve</span>");
   t = t.replace(/Moyen(?!ne)/g, "<span class=\"tag tag-amber\">Moyen</span>");
@@ -186,6 +203,14 @@ function priorityTag(p){
 function confTag(c){
   var cls = c === "Eleve" ? "tag-green" : (c === "Moyen" ? "tag-amber" : "tag-gray");
   return "<span class=\"tag " + cls + "\">Confiance " + c + "</span>";
+}
+function tierTag(t){
+  var cls = t === "A" ? "tag-green" : (t === "B" ? "tag-amber" : "tag-gray");
+  return "<span class=\"tag " + cls + "\">Cible " + t + "</span>";
+}
+function mozTag(v){
+  var cls = v === "Confirmee" ? "tag-green" : (v === "Probable" ? "tag-amber" : "tag-gray");
+  return "<span class=\"tag " + cls + "\">" + esc(v) + "</span>";
 }
 
 function parseMd(md){
@@ -290,29 +315,73 @@ function fetchText(path){
 }
 
 function prefetchAll(){
-  var all = PROJECTS.map(function(p){ return DOSSIER_DIR + p.file; }).concat(PARTNERS.map(function(p){ return PARTNER_DIR + p.file; }));
+  var all = PROJECTS.map(function(p){ return DOSSIER_DIR + p.file; })
+    .concat(PARTNERS.map(function(p){ return PARTNER_DIR + p.file; }))
+    .concat([COMPANY_FILE]);
   all.forEach(function(path){ fetchText(path).catch(function(){}); });
+}
+
+function parseKV(lines){
+  var fields = {};
+  var decideurs = [];
+  var inDec = false;
+  lines.forEach(function(line){
+    if(/^###\s+Decideurs/i.test(line.trim())){ inDec = true; return; }
+    var m = line.match(/^-\s*([^:]+?)\s*:\s*(.+)$/);
+    if(m){
+      if(inDec) decideurs.push({role: m[1].trim(), val: m[2].trim()});
+      else fields[m[1].trim()] = m[2].trim();
+    }
+  });
+  return {fields: fields, decideurs: decideurs};
+}
+
+function getCompanies(){
+  if(COMPANIES) return Promise.resolve(COMPANIES);
+  return fetchText(COMPANY_FILE).then(function(md){
+    var parsed = parseMd(md);
+    var list = [];
+    parsed.sections.forEach(function(s){
+      if(/^Methodologie/i.test(s.heading) || /^Regle de confiance/i.test(s.heading)) return;
+      var m = s.heading.match(/^(.*)\s+\(([^)]+)\)\s*$/);
+      var name = m ? m[1].trim() : s.heading;
+      var country = m ? m[2].trim() : "";
+      var kv = parseKV(s.lines);
+      list.push({
+        name: name, country: country, heading: s.heading,
+        fields: kv.fields, decideurs: kv.decideurs,
+        score: parseInt(kv.fields["Score de prospection"] || "0", 10) || 0,
+        tier: kv.fields["Priorite commerciale SADMUN"] || "C",
+        moz: kv.fields["Presence Mozambique"] || "A qualifier",
+        sector: kv.fields["Secteur"] || "",
+        crm: kv.fields["Statut CRM"] || "Jamais contactee"
+      });
+    });
+    list.sort(function(a,b){ return b.score - a.score; });
+    COMPANIES = list;
+    return list;
+  });
 }
 
 function layout(activeHash){
   var navItems = [
+    {h:"#/companies", ico:"&#9670;", label:"Entreprises internationales", primary:true},
     {h:"#/dashboard", ico:"&#9673;", label:"Dashboard"},
-    {h:"#/projects", ico:"&#9673;", label:"Projets (" + PROJECTS.length + ")"},
-    {h:"#/partners", ico:"&#9673;", label:"Entreprises"}
+    {h:"#/projects", ico:"&#9673;", label:"Projets (" + PROJECTS.length + ")"}
   ];
   var nav = navItems.map(function(n){
-    var cls = "nav-item" + (activeHash === n.h ? " active" : "");
-    return "<div class=\"" + cls + "\" onclick=\"location.hash='" + n.h + "'\"><span class=\"nav-ico\">&#9670;</span>" + n.label + "</div>";
+    var cls = "nav-item" + (n.primary ? " primary" : "") + (activeHash === n.h ? " active" : "");
+    return "<div class=\"" + cls + "\" onclick=\"location.hash='" + n.h + "'\"><span class=\"nav-ico\">" + n.ico + "</span>" + n.label + "</div>";
   }).join("");
   return "<div class=\"sidebar\">" +
-    "<div class=\"brand\"><div class=\"brand-mark\">S</div><div><div class=\"brand-name\">SADMUN Intelligence</div><div class=\"brand-sub\">Mozambique</div></div></div>" +
+    "<div class=\"brand\"><div class=\"brand-mark\">S</div><div><div class=\"brand-name\">SADMUN Intelligence</div><div class=\"brand-sub\">Business Development</div></div></div>" +
     "<div class=\"nav-section\">Navigation</div>" + nav +
-    "<div class=\"sidebar-foot\">Sprint 1 &mdash; 10 dossiers commerciaux<br>Donnees verifiees World Bank Procurement</div>" +
+    "<div class=\"sidebar-foot\">Phase 1 &mdash; 30 entreprises europeennes identifiees<br>Aucune donnee sur personne physique n'est inventee.</div>" +
     "</div>" +
     "<div class=\"main\">" +
     "<div class=\"topbar\"><div class=\"search-wrap\">" +
     "<span class=\"search-ico\">&#8981;</span>" +
-    "<input class=\"search-input\" id=\"searchInput\" placeholder=\"Rechercher un projet, une entreprise, un mot-cle...\" oninput=\"onSearch(this.value)\" onfocus=\"onSearch(this.value)\">" +
+    "<input class=\"search-input\" id=\"searchInput\" placeholder=\"Rechercher une entreprise, un projet, un mot-cle...\" oninput=\"onSearch(this.value)\" onfocus=\"onSearch(this.value)\">" +
     "<div id=\"searchResults\"></div>" +
     "</div></div>" +
     "<div class=\"content\" id=\"main\"></div>" +
@@ -320,45 +389,53 @@ function layout(activeHash){
 }
 
 function route(){
-  var hash = location.hash || "#/dashboard";
+  var hash = location.hash || "#/companies";
   var app = document.getElementById("app");
-  var navHash = "#/dashboard";
-  if(hash.indexOf("#/projects") === 0 && hash.indexOf("#/project/") !== 0) navHash = "#/projects";
-  else if(hash.indexOf("#/partners") === 0 && hash.indexOf("#/partner/") !== 0) navHash = "#/partners";
+  var navHash = "#/companies";
+  if(hash.indexOf("#/dashboard") === 0) navHash = "#/dashboard";
+  else if(hash.indexOf("#/projects") === 0 && hash.indexOf("#/project/") !== 0) navHash = "#/projects";
   app.innerHTML = layout(navHash);
   var main = document.getElementById("main");
   if(hash.indexOf("#/project/") === 0){
     renderProjectDetail(main, decodeURIComponent(hash.split("/")[2]));
   } else if(hash.indexOf("#/partner/") === 0){
     renderPartnerDetail(main, decodeURIComponent(hash.split("/")[2]));
+  } else if(hash.indexOf("#/company/") === 0){
+    renderCompanyDetail(main, decodeURIComponent(hash.split("/").slice(2).join("/")));
   } else if(hash === "#/projects"){
     renderProjectsGrid(main);
-  } else if(hash === "#/partners"){
-    renderPartnersGrid(main);
-  } else {
+  } else if(hash === "#/dashboard"){
     renderDashboard(main);
+  } else {
+    renderCompaniesHome(main);
   }
   renderCompareBar();
 }
 
 function renderDashboard(main){
-  var high = PROJECTS.filter(function(p){ return p.priority === "Haute"; }).length;
-  var verified = PROJECTS.filter(function(p){ return p.agency.indexOf("confirme") !== -1; }).length;
-  main.innerHTML =
-    "<div class=\"fade-in\">" +
-    "<h1 class=\"page-title\">Bonjour Gilles</h1>" +
-    "<p class=\"page-sub\">Vue d'ensemble des opportunites commerciales identifiees au Mozambique.</p>" +
-    "<div class=\"kpi-row\">" +
-    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + PROJECTS.length + "</div><div class=\"kpi-label\">Projets analyses (Sprint 1)</div></div>" +
-    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + verified + "</div><div class=\"kpi-label\">Organismes d'execution confirmes</div></div>" +
-    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + high + "</div><div class=\"kpi-label\">Projets a priorite haute</div></div>" +
-    "<div class=\"kpi-card\"><div class=\"kpi-num\">" + PARTNERS.length + "</div><div class=\"kpi-label\">Fiches entreprises qualifiees</div></div>" +
-    "</div>" +
-    "<div class=\"section-h\">Projets prioritaires</div>" +
-    "<div class=\"grid\">" + PROJECTS.filter(function(p){return p.priority==="Haute";}).map(projectCard).join("") + "</div>" +
-    "<div class=\"section-h\">Tous les projets</div>" +
-    "<div class=\"grid\">" + PROJECTS.map(projectCard).join("") + "</div>" +
-    "</div>";
+  main.innerHTML = "<div class=\"empty\">Chargement...</div>";
+  getCompanies().then(function(list){
+    var neverContacted = list.filter(function(c){ return c.crm === "Jamais contactee"; }).length;
+    var tierA = list.filter(function(c){ return c.tier === "A"; }).length;
+    var mozConfirmed = list.filter(function(c){ return c.moz === "Confirmee" || c.moz === "Probable"; }).length;
+    var top5 = list.slice(0,5);
+    main.innerHTML =
+      "<div class=\"fade-in\">" +
+      "<h1 class=\"page-title\">Dashboard</h1>" +
+      "<p class=\"page-sub\">Vue de pilotage de la prospection commerciale.</p>" +
+      "<div class=\"kpi-row\">" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + list.length + "</div><div class=\"kpi-label\">Entreprises identifiees (Europe, Phase 1)</div></div>" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + tierA + "</div><div class=\"kpi-label\">Cibles A (priorite haute)</div></div>" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + mozConfirmed + "</div><div class=\"kpi-label\">Presence Mozambique confirmee ou probable</div></div>" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + neverContacted + "</div><div class=\"kpi-label\">Jamais contactees (a activer)</div></div>" +
+      "</div>" +
+      "<div class=\"section-h\">A regarder cette semaine (Top 5)</div>" +
+      rankTable(top5) +
+      "<div class=\"note-box\">Dashboard oriente entreprises : ce sont les cibles commerciales qui pilotent l'application, pas les projets. Voir la page \"Entreprises internationales\" pour le classement complet et le detail par entreprise.</div>" +
+      "<div class=\"section-h\">Projets suivis (support de l'intelligence commerciale)</div>" +
+      "<div class=\"grid\">" + PROJECTS.map(projectCard).join("") + "</div>" +
+      "</div>";
+  });
 }
 
 function projectCard(p){
@@ -374,32 +451,169 @@ function projectCard(p){
 }
 
 function renderProjectsGrid(main){
-  main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Projets</h1><p class=\"page-sub\">" + PROJECTS.length + " dossiers commerciaux complets, construits a partir de sources publiques verifiables.</p>" +
+  main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Projets</h1><p class=\"page-sub\">" + PROJECTS.length + " dossiers commerciaux, utilises comme signaux pour la prospection des entreprises internationales.</p>" +
     "<div class=\"grid\">" + PROJECTS.map(projectCard).join("") + "</div></div>";
 }
 
-function partnerCard(p){
-  return "<div class=\"card\" onclick=\"location.hash='#/partner/" + p.slug + "'\">" +
-    "<div class=\"card-top\"><span class=\"card-id\">" + esc(p.related) + "</span></div>" +
-    "<div class=\"card-title\">" + esc(p.name) + "</div>" +
-    "<div class=\"card-meta\">" + esc(p.country) + "</div>" +
-    "<div class=\"card-pitch\">" + esc(p.sector) + "</div>" +
-    "<div class=\"card-foot\">" + confTag(p.confidence) + "</div>" +
-    "</div>";
+var ACTIVE_REGION = "Europe";
+var REGIONS = ["Europe","Amerique du Nord","Asie","Moyen-Orient","Afrique (hors Mozambique)","Mozambique"];
+
+function nextAction(c){
+  if(c.crm === "Jamais contactee") return "Identifier interlocuteur (site officiel / LinkedIn) et preparer premier contact";
+  return "A definir";
 }
 
-function renderPartnersGrid(main){
-  main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Entreprises (Partner Intelligence)</h1>" +
-    "<p class=\"page-sub\">Fiches construites uniquement a partir de sources publiques verifiables (World Bank Procurement, disclosures officielles).</p>" +
-    "<div class=\"grid\">" + PARTNERS.map(partnerCard).join("") + "</div></div>";
+function rankTable(list){
+  var rows = list.map(function(c, idx){
+    var rankCls = idx < 3 ? "rank-num top3" : "rank-num";
+    return "<tr class=\"rank-row\" onclick=\"location.hash='#/company/" + encodeURIComponent(c.name) + "'\">" +
+      "<td><span class=\"" + rankCls + "\">" + (idx+1) + "</span></td>" +
+      "<td><strong>" + esc(c.name) + "</strong></td>" +
+      "<td>" + esc(c.country) + "</td>" +
+      "<td>" + esc(c.sector) + "</td>" +
+      "<td><strong style=\"color:var(--accent)\">" + c.score + "</strong></td>" +
+      "<td>" + mozTag(c.moz) + "</td>" +
+      "<td>" + esc(c.crm) + "</td>" +
+      "<td style=\"color:var(--text-dim);font-size:12px;\">" + esc(nextAction(c)) + "</td>" +
+      "</tr>";
+  }).join("");
+  return "<div class=\"table-wrap\"><table><thead><tr><th></th><th>Entreprise</th><th>Pays</th><th>Secteur</th>" +
+    "<th>Score</th><th>Presence Mozambique</th><th>Statut CRM</th><th>Prochaine action</th></tr></thead>" +
+    "<tbody>" + rows + "</tbody></table></div>";
 }
 
-var CURRENT_GROUPS = [];
-var CURRENT_TAB = 0;
+function companyMiniCard(c){
+  return "<div class=\"card\" onclick=\"location.hash='#/company/" + encodeURIComponent(c.name) + "'\">" +
+    "<div class=\"card-top\"><span class=\"card-id\">" + esc(c.country) + "</span>" + tierTag(c.tier) + "</div>" +
+    "<div class=\"card-title\">" + esc(c.name) + "</div>" +
+    "<div class=\"card-meta\">" + esc(c.sector) + "</div>" +
+    "<div class=\"card-foot\">" +
+    "<span class=\"tag tag-gray\">Score " + c.score + "</span>" + mozTag(c.moz) +
+    "</div></div>";
+}
+
+function setRegion(r){
+  ACTIVE_REGION = r;
+  var main = document.getElementById("main");
+  renderCompaniesHome(main);
+}
+
+function renderCompaniesHome(main){
+  main.innerHTML = "<div class=\"empty\">Chargement du registre entreprises...</div>";
+  var rtabs = "<div class=\"region-tabs\">" + REGIONS.map(function(r){
+    return "<div class=\"rtab" + (r === ACTIVE_REGION ? " active" : "") + "\" onclick=\"setRegion('" + r + "')\">" + r + "</div>";
+  }).join("") + "</div>";
+
+  if(ACTIVE_REGION === "Asie"){
+    main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Entreprises internationales</h1>" +
+      "<p class=\"page-sub\">Ce sont les clients de SADMUN : entreprises qui repondent ou vont repondre a des appels d'offres au Mozambique.</p>" +
+      rtabs +
+      "<div class=\"note-box\">Base Asie en cours de constitution (Phase 2). Un profil deja documente a partir de donnees World Bank Procurement verifiees :</div>" +
+      "<div class=\"grid\">" + PARTNERS.filter(function(p){return p.region==="Asie";}).map(function(p){
+        return "<div class=\"card\" onclick=\"location.hash='#/partner/" + p.slug + "'\">" +
+          "<div class=\"card-top\"><span class=\"card-id\">" + esc(p.country) + "</span></div>" +
+          "<div class=\"card-title\">" + esc(p.name) + "</div>" +
+          "<div class=\"card-pitch\">" + esc(p.sector) + "</div>" +
+          "<div class=\"card-foot\">" + confTag(p.confidence) + "</div></div>";
+      }).join("") + "</div></div>";
+    return;
+  }
+  if(ACTIVE_REGION === "Mozambique"){
+    main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Entreprises internationales</h1>" +
+      rtabs +
+      "<div class=\"note-box\"><strong style=\"color:var(--text);\">Les entreprises mozambicaines ne sont pas des prospects.</strong><br>Elles interviennent uniquement comme partenaires locaux, sous-traitants, fournisseurs ou membres de consortium aux cotes des entreprises internationales ciblees. Exemple documente : Verde Azul Consult Lda (Mozambique), consultant environnemental ayant remporte un marche reel sur le projet P179797.</div></div>";
+    return;
+  }
+  if(ACTIVE_REGION !== "Europe"){
+    main.innerHTML = "<div class=\"fade-in\"><h1 class=\"page-title\">Entreprises internationales</h1>" +
+      rtabs + "<div class=\"note-box\">Base " + ACTIVE_REGION + " en cours de constitution (Phase 2 -- aucune entreprise n'est encore identifiee dans ce registre pour cette zone).</div></div>";
+    return;
+  }
+
+  getCompanies().then(function(list){
+    var top10 = list.slice(0,10);
+    var tierA = list.filter(function(c){ return c.tier === "A"; });
+    var tierB = list.filter(function(c){ return c.tier === "B"; });
+    var tierC = list.filter(function(c){ return c.tier === "C"; });
+    main.innerHTML =
+      "<div class=\"fade-in\">" +
+      "<h1 class=\"page-title\">Entreprises internationales</h1>" +
+      "<p class=\"page-sub\">Ce sont les clients de SADMUN. Si vous devez prospecter demain matin, voici par ou commencer.</p>" +
+      rtabs +
+      "<div class=\"kpi-row\">" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + list.length + "</div><div class=\"kpi-label\">Entreprises identifiees</div></div>" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + tierA.length + "</div><div class=\"kpi-label\">Cibles A</div></div>" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + tierB.length + "</div><div class=\"kpi-label\">Cibles B</div></div>" +
+      "<div class=\"kpi-card\"><div class=\"kpi-num\">" + tierC.length + "</div><div class=\"kpi-label\">Cibles C</div></div>" +
+      "</div>" +
+      "<div class=\"section-h\">Top 10 cibles SADMUN</div>" +
+      rankTable(top10) +
+      "<div class=\"section-h\">Cibles A (" + tierA.length + ")</div>" +
+      "<div class=\"grid\">" + tierA.map(companyMiniCard).join("") + "</div>" +
+      "<div class=\"section-h\">Cibles B (" + tierB.length + ")</div>" +
+      "<div class=\"grid\">" + tierB.map(companyMiniCard).join("") + "</div>" +
+      "<div class=\"section-h\">Cibles C (" + tierC.length + ")</div>" +
+      "<div class=\"grid\">" + tierC.map(companyMiniCard).join("") + "</div>" +
+      "</div>";
+  });
+}
+
+function renderCompanyDetail(main, name){
+  main.innerHTML = "<div class=\"empty\">Chargement...</div>";
+  getCompanies().then(function(list){
+    var c = list.filter(function(x){ return x.name === name; })[0];
+    if(!c){ main.innerHTML = "<div class=\"empty\">Entreprise introuvable dans le registre.</div>"; return; }
+    var f = c.fields;
+    var decRows = c.decideurs.map(function(d){
+      return "<tr><td>" + esc(d.role) + "</td><td>" + inline(d.val) + "</td></tr>";
+    }).join("");
+    main.innerHTML =
+      "<div class=\"fade-in\">" +
+      "<div class=\"crumb\"><span onclick=\"location.hash='#/companies'\">Entreprises internationales</span> / " + esc(c.name) + "</div>" +
+      "<div class=\"detail-head\">" +
+      "<div class=\"detail-badges\">" + tierTag(c.tier) + "<span class=\"tag tag-gray\">Score " + c.score + "</span>" + mozTag(c.moz) + "</div>" +
+      "<div class=\"detail-title\">" + esc(c.name) + "</div>" +
+      "<div class=\"detail-sub\">" + esc(c.sector) + " &middot; " + esc(c.country) + "</div>" +
+      "<div class=\"detail-grid\">" +
+      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Site officiel</div><div class=\"mini-stat-val\">" + esc(f["Site officiel"] || "A qualifier") + "</div></div>" +
+      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Afrique</div><div class=\"mini-stat-val\">" + inline(f["Presence Afrique"] || "A qualifier") + "</div></div>" +
+      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Afrique australe</div><div class=\"mini-stat-val\">" + inline(f["Presence Afrique australe"] || "A qualifier") + "</div></div>" +
+      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Mozambique</div><div class=\"mini-stat-val\">" + mozTag(c.moz) + "</div></div>" +
+      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Statut CRM</div><div class=\"mini-stat-val\">" + esc(c.crm) + "</div></div>" +
+      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Niveau de confiance</div><div class=\"mini-stat-val\">" + inline(f["Niveau de confiance"] || "A qualifier") + "</div></div>" +
+      "</div></div>" +
+      "<div class=\"sec-card\"><h3>Intelligence commerciale</h3>" +
+      "<h4>Pourquoi cette entreprise est une cible pour SADMUN</h4><p>" + inline(f["Pourquoi cible SADMUN"] || "A qualifier") + "</p>" +
+      "<h4>Services SADMUN vendables</h4><p>" + inline(f["Services SADMUN vendables"] || "A qualifier") + "</p>" +
+      "<h4>Signal devant declencher une prise de contact</h4><p>" + inline(f["Signal de prise de contact"] || "A qualifier") + "</p>" +
+      "<h4>Types de projets pertinents</h4><p>" + inline(f["Secteur"] || "A qualifier") + "</p>" +
+      "</div>" +
+      "<div class=\"sec-card\"><h3>Decideurs (fonctions a rechercher -- aucun nom invente)</h3>" +
+      "<div class=\"table-wrap\"><table><thead><tr><th>Fonction</th><th>Statut</th></tr></thead><tbody>" + decRows + "</tbody></table></div>" +
+      "</div>" +
+      "<div class=\"sec-card\"><h3>Partner Readiness (CRM)</h3>" +
+      "<div class=\"table-wrap\"><table><tbody>" +
+      "<tr><td>Statut CRM</td><td>" + esc(c.crm) + "</td></tr>" +
+      "<tr><td>Prochaine action</td><td>" + esc(nextAction(c)) + "</td></tr>" +
+      "<tr><td>Premier contact</td><td>Non</td></tr>" +
+      "<tr><td>Presentation envoyee</td><td>Non</td></tr>" +
+      "<tr><td>Reunion realisee</td><td>Non</td></tr>" +
+      "<tr><td>NDA signe</td><td>Non</td></tr>" +
+      "<tr><td>Accord de partenariat</td><td>Non</td></tr>" +
+      "<tr><td>Referencement fournisseur</td><td>Non</td></tr>" +
+      "<tr><td>Mission realisee</td><td>Non</td></tr>" +
+      "</tbody></table></div></div>" +
+      "<div class=\"sec-card\"><h3>Sources et fiabilite</h3><p>" + inline(f["Sources publiques"] || "A qualifier") + "</p></div>" +
+      "</div>";
+  });
+}
 
 function renderDetailSkeleton(main, crumbLabel, crumbHash){
   main.innerHTML = "<div class=\"crumb\"><span onclick=\"location.hash='" + crumbHash + "'\">" + crumbLabel + "</span> / chargement...</div><div class=\"empty\">Chargement du dossier...</div>";
 }
+
+var CURRENT_GROUPS = [];
+var CURRENT_TAB = 0;
 
 function renderProjectDetail(main, id){
   var proj = PROJECTS.filter(function(p){ return p.id === id; })[0];
@@ -411,7 +625,7 @@ function renderProjectDetail(main, id){
     CURRENT_TAB = 0;
     drawProjectDetail(main, proj, parsed);
   }).catch(function(err){
-    main.innerHTML = "<div class=\"empty\">Erreur de chargement du dossier (" + esc(String(err)) + ").</div>";
+    main.innerHTML = "<div class=\"empty\">Erreur de chargement du dossier.</div>";
   });
 }
 
@@ -443,25 +657,22 @@ function drawProjectDetail(main, proj, parsed){
 function selectTab(idx){
   CURRENT_TAB = idx;
   var main = document.getElementById("main");
-  var hash = location.hash;
-  var id = decodeURIComponent(hash.split("/")[2]);
+  var id = decodeURIComponent(location.hash.split("/")[2]);
   var proj = PROJECTS.filter(function(p){ return p.id === id; })[0];
-  fetchText(DOSSIER_DIR + proj.file).then(function(md){
-    drawProjectDetail(main, proj, parseMd(md));
-  });
+  fetchText(DOSSIER_DIR + proj.file).then(function(md){ drawProjectDetail(main, proj, parseMd(md)); });
 }
 
 function renderPartnerDetail(main, slug){
   var p = PARTNERS.filter(function(x){ return x.slug === slug; })[0];
   if(!p){ main.innerHTML = "<div class=\"empty\">Entreprise introuvable.</div>"; return; }
-  renderDetailSkeleton(main, "Entreprises", "#/partners");
+  renderDetailSkeleton(main, "Entreprises internationales", "#/companies");
   fetchText(PARTNER_DIR + p.file).then(function(md){
     var parsed = parseMd(md);
     CURRENT_GROUPS = groupSections(parsed.sections);
     CURRENT_TAB = 0;
     drawPartnerDetail(main, p, parsed);
   }).catch(function(err){
-    main.innerHTML = "<div class=\"empty\">Erreur de chargement (" + esc(String(err)) + ").</div>";
+    main.innerHTML = "<div class=\"empty\">Erreur de chargement.</div>";
   });
 }
 
@@ -476,7 +687,7 @@ function drawPartnerDetail(main, p, parsed){
   var relProj = PROJECTS.filter(function(x){ return x.id === p.related; })[0];
   main.innerHTML =
     "<div class=\"fade-in\">" +
-    "<div class=\"crumb\"><span onclick=\"location.hash='#/partners'\">Entreprises</span> / " + esc(p.name) + "</div>" +
+    "<div class=\"crumb\"><span onclick=\"location.hash='#/companies'\">Entreprises internationales</span> / " + esc(p.name) + "</div>" +
     "<div class=\"detail-head\">" +
     "<div class=\"detail-badges\">" + confTag(p.confidence) + "</div>" +
     "<div class=\"detail-title\">" + esc(parsed.title || p.name) + "</div>" +
@@ -496,9 +707,7 @@ function selectPartnerTab(idx){
   var main = document.getElementById("main");
   var slug = decodeURIComponent(location.hash.split("/")[2]);
   var p = PARTNERS.filter(function(x){ return x.slug === slug; })[0];
-  fetchText(PARTNER_DIR + p.file).then(function(md){
-    drawPartnerDetail(main, p, parseMd(md));
-  });
+  fetchText(PARTNER_DIR + p.file).then(function(md){ drawPartnerDetail(main, p, parseMd(md)); });
 }
 
 function snippet(text, q){
@@ -510,9 +719,16 @@ function snippet(text, q){
 
 function onSearch(q){
   var box = document.getElementById("searchResults");
+  if(!box) return;
   if(!q || q.trim().length < 2){ box.innerHTML = ""; box.className=""; return; }
   q = q.trim();
   var results = [];
+  (COMPANIES || []).forEach(function(c){
+    var hay = (c.name + " " + c.sector + " " + c.country + " " + JSON.stringify(c.fields)).toLowerCase();
+    if(hay.indexOf(q.toLowerCase()) !== -1){
+      results.push({type:"Entreprise", label:c.name, hash:"#/company/" + encodeURIComponent(c.name), snip: c.sector + " -- " + c.country});
+    }
+  });
   PROJECTS.forEach(function(p){
     var text = CACHE[DOSSIER_DIR + p.file] || "";
     var hay = (p.title + " " + p.pitch + " " + p.region + " " + text).toLowerCase();
@@ -533,7 +749,7 @@ function onSearch(q){
     return;
   }
   box.className = "search-results";
-  box.innerHTML = results.slice(0, 12).map(function(r){
+  box.innerHTML = results.slice(0, 14).map(function(r){
     return "<div class=\"search-result-item\" onclick=\"location.hash='" + r.hash + "';clearSearch();\">" +
       "<div class=\"sr-title\"><span class=\"sr-type\">" + r.type + "</span>" + esc(r.label) + "</div>" +
       "<div class=\"sr-snippet\">" + esc(r.snip) + "</div></div>";
@@ -595,6 +811,6 @@ function showCompareModal(){
 }
 
 window.addEventListener("hashchange", route);
-window.addEventListener("DOMContentLoaded", function(){ route(); prefetchAll(); });
-if(document.readyState !== "loading"){ route(); prefetchAll(); }
+window.addEventListener("DOMContentLoaded", function(){ route(); prefetchAll(); getCompanies(); });
+if(document.readyState !== "loading"){ route(); prefetchAll(); getCompanies(); }
 </script>\n</body>\n</html>\n
