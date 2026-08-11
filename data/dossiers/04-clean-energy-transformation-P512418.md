@@ -130,3 +130,76 @@ du plan de passation de marches.
 ## 13. Niveau de confiance global
 
 - Donnees chiffrees : **Eleve**. Emprunteur/agence : **A qualifier**. Analyse IA : **Moyen**. Cibles/scores : **Faible**.
+
+## 14. Mise a jour Sprint 1 bis - Verifications complementaires (organisme d'execution, equipe Banque Mondiale, marches reels)
+
+**Organisme d'execution :** toujours non designe publiquement au 11/08/2026 (champ N/A sur la fiche officielle). Le projet est rattache au meme programme que P179797 (Green Energy Corridors), dont l'organisme d'execution confirme est EDM (Electricidade de Mocambique) et MIREME (Ministere des Ressources Minerales et de l'Energie). Il est probable, mais non confirme, que ces memes acteurs soient impliques ici - **a verifier explicitement avant toute prospection**.
+
+**Equipe Banque Mondiale (sources publiques) :**
+
+| Role | Nom | Source | Confiance |
+|---|---|---|---|
+| Task Team Leader | Jenny Chao | Fiche projet WB | Eleve |
+| Procurement Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Environmental Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Social Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Financial Management Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+
+**Marches reellement attribues sur ce projet a ce jour :** Aucun. Verification effectuee sur l'onglet Procurement (projects.worldbank.org, consulte le 11/08/2026) : "No Procurement Notices available for this project".
+
+**Entreprises comparables ayant gagne des marches similaires sur le projet-frere P179797 (meme secteur energie, meme probable organisme d'execution EDM/MIREME) :**
+
+| Entreprise | Marche gagne | Source |
+|---|---|---|
+| Ernst & Young Maputo | Audit financier - P179797, $33 599, juillet 2026 | Avis d'attribution WB OP00456179 |
+| Verde Azul Consult Lda (Mozambique) | Mise a jour des instruments de sauvegarde environnementale/sociale - P179797, $70 197, mai 2025 | Avis d'attribution WB OP00380434 |
+
+*(Ces attributions concernent le projet P179797, pas ce projet-ci directement - fournies comme reference sectorielle forte car meme probable organisme d'execution.)*
+
+## 15. Pourquoi ces entreprises ?
+
+**EDM (Electricidade de Mocambique)** - score 65/100 (maintenu). Organisme d'execution confirme sur le projet-frere P179797 dans le meme secteur/programme - tres probablement implique ici aussi, mais a verifier.
+
+**Ernst & Young Maputo** - score 68/100. Preuve directe de gain de marche d'audit sur le projet-frere du meme programme energie (P179797) - tres probable besoin similaire ici compte tenu du montant ($400M, le plus eleve des 10 projets suivis).
+
+**Verde Azul Consult** - score 60/100. Preuve directe de gain de marche de sauvegardes E&S sur P179797 - un projet de $400M avec risque E&S "Substantiel" aura des besoins similaires, potentiellement demultiplies.
+
+## 16. Comment entrer chez eux ?
+
+- **EDM** : Direction Generale EDM (siege Maputo), Direction technique reseaux/transmission, participation aux conferences energie Afrique australe (ex. Africa Energy Forum), MIREME comme porte d'entree institutionnelle parallele.
+- **Ernst & Young Maputo / Verde Azul Consult** : memes portes d'entree que documentees dans les dossiers 1 et 10 (Direction Afrique australe EY, siege Maputo Verde Azul).
+- Pour les grands EPC electriques (Scatec, Globeleq, Sinohydro type) : salons sectoriels (Africa Energy Indaba, Africa Energy Forum), Business Development Afrique australe, LinkedIn.
+- Portes d'entree transverses : reunions du Groupe Consultatif Banque Mondiale Mozambique, association mozambicaine des professionnels de l'energie.
+
+## 17. SADMUN Value Proposition
+
+Pour EDM/MIREME et les contractants EPC/consultants qui seront mobilises sur un projet de cette ampleur ($400M, le plus gros des 10 suivis), SADMUN peut reduire : le cout et le delai de mobilisation logistique a grande echelle (equipements, hebergement de nombreuses equipes techniques), le risque administratif de permitting multi-sites pour des lignes de transmission, et le risque de coordination communautaire pour les impacts fonciers lies aux infrastructures electriques.
+
+## 18. Argumentaire commercial (specifique a ce projet)
+
+"Avec $400M engages, ce projet est le plus important des financements Banque Mondiale actuellement suivis par SADMUN au Mozambique dans le secteur energie. Sur le projet-frere Green Energy Corridors (P179797), nous avons deja identifie les prestataires qui accompagnent EDM et MIREME sur l'audit et les sauvegardes environnementales. SADMUN peut securiser votre mobilisation operationnelle locale dans les memes conditions, a plus grande echelle."
+
+## 19. Preparation de rendez-vous (30 minutes)
+
+**Sujets a aborder :** confirmation du role d'EDM/MIREME sur ce projet specifique ; ampleur des sous-projets prevus ; besoins de mobilisation a grande echelle.
+
+**Questions a poser :** "EDM et MIREME seront-ils les organismes d'execution de ce financement ?" ; "Combien de sous-projets/lots sont envisages ?"
+
+**Documents a montrer :** plaquette SADMUN, reference de collaboration potentielle sur P179797 (meme programme).
+
+**Engagements a proposer :** veille active jusqu'a confirmation de l'organisme d'execution ; prise de contact immediate a ce moment-la, avec offre de service adaptee a l'echelle du projet.
+
+## 20. Probabilite de succes
+
+- **Probabilite d'obtenir un rendez-vous :** Moyenne (montant tres eleve, secteur tres actif, mais organisme d'execution non encore confirme).
+- **Probabilite de devenir partenaire :** Moyenne a 6-12 mois si EDM/MIREME confirmes comme sur P179797.
+- **Probabilite d'obtenir une premiere mission :** Moyenne a long terme compte tenu du volume ($400M) et de la duree probable du programme.
+
+*(Estimations qualitatives, non statistiques.)*
+
+## 21. Plan des 30 prochains jours
+
+- **Semaine 1 :** Verifier si EDM/MIREME sont confirmes comme organismes d'execution (fiche projet + communiques officiels).
+- **Semaine 2 :** Si confirme, capitaliser sur les contacts deja identifies via le dossier P179797 (Ernst & Young Maputo, Verde Azul Consult).
+- **Semaine 3 :** Rechercher les grands EPC electriques deja actifs au Mozambique (veille sectorielle, salons Africa Energy Forum).
+- **Semaine 4 :** Bilan du mois, mise a jour du CRM.
