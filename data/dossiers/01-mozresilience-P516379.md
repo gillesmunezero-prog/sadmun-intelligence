@@ -152,3 +152,80 @@ anterieurs de SADMUN dans ce dossier (regle : pas d'invention).*
 - Analyse IA / besoins : **Moyen** (deduction sectorielle raisonnable, non confirmee par le PAD complet).
 - Entreprises cibles / scores : **Faible** (hypothese analytique, a verifier).
 - Decideurs entreprise : **A qualifier** (aucune donnee verifiee a ce stade).
+
+## 14. Mise a jour Sprint 1 bis - Verifications complementaires (organisme d'execution, equipe Banque Mondiale, marches reels)
+
+**Organisme d'execution confirme :** MOPHRH (Ministerio das Obras Publicas, Habitacao e Recursos Hidricos), MAEFP, et Municipalite de Maputo - confirme sur la fiche officielle du projet (aucun changement depuis la creation du dossier).
+
+**Equipe Banque Mondiale (sources publiques) :**
+
+| Role | Nom | Source | Confiance |
+|---|---|---|---|
+| Task Team Leader | Suranga Sooriya Kumara Kahandawa | Fiche projet WB | Eleve |
+| Procurement Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Environmental Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Social Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+| Financial Management Specialist | A qualifier | Non publie sur la fiche projet publique | - |
+
+Note : seul le Task Team Leader est nommement publie par la Banque Mondiale sur la fiche projet grand public. Les autres membres de l'equipe ne sont identifiables que dans les Aide-Memoires de mission (documents parfois restreints) - a verifier au cas par cas via l'onglet Documents du projet.
+
+**Marches reellement attribues sur ce projet a ce jour :** Aucun. Verification effectuee sur l'onglet Procurement de la fiche projet (projects.worldbank.org, consulte le 11/08/2026) : "No Procurement Notices available for this project". Le projet est au stade Board Approved (21 juillet 2026) - le plan de passation de marches n'a pas encore ete publie. C'est une fenetre d'opportunite : SADMUN peut se positionner en amont, avant l'arrivee des premiers concurrents.
+
+**Entreprises comparables ayant gagne des marches similaires sur d'autres projets Banque Mondiale au Mozambique (donnees reelles, autres projets) :**
+
+| Entreprise | Marche gagne (projet de reference) | Source |
+|---|---|---|
+| Ernst & Young Maputo | Audit financier - Green Energy Corridors Project (P179797), $33 599, juillet 2026 | Avis d'attribution WB OP00456179 |
+| Verde Azul Consult Lda (Mozambique) | Mise a jour des instruments de sauvegarde environnementale/sociale - P179797, $70 197, mai 2025 | Avis d'attribution WB OP00380434 |
+| China Road and Bridge Corporation | Fourniture de ponts metalliques - Climate Resilient Roads for the North (P500488), $12 748 135, juin 2025 | Avis d'attribution WB OP00365488 |
+| Mpamot Africa Pty Ltd (Afrique du Sud) + Structcon Consultoria & Engenharia (Mozambique) | Etude Pont de Lurio - P500488, $584 219, juillet 2026 | Avis d'attribution WB OP00460543 |
+
+*(Ces attributions concernent d'autres projets Banque Mondiale au Mozambique et sont fournies comme reference de marche - elles ne prouvent pas une candidature sur ce projet specifique.)*
+
+## 15. Pourquoi ces entreprises ?
+
+**Ernst & Young Maputo** - score 70/100. Cabinet d'audit international avec presence locale etablie a Maputo, gagne regulierement les marches d'audit financier des projets Banque Mondiale au Mozambique (preuve : attribution P179797). Un projet de $166M avec plusieurs agences d'execution necessitera tres probablement un audit financier annuel - poste recurrent sur les projets Banque Mondiale.
+
+**Verde Azul Consult Lda** - score 65/100. Bureau d'etudes mozambicain specialise en sauvegardes environnementales et sociales, gagne des marches de mise a jour d'ESIA sur des projets d'infrastructure finances par la Banque Mondiale. Un projet de resilience urbaine avec relogement/GRM aura besoin de ce type de prestataire.
+
+**Mota-Engil** - score 60/100 (maintenu, cf. section 4) - grand groupe de construction avec presence historique au Mozambique, profil pertinent pour les travaux urbains si le projet inclut des lots de construction/rehabilitation.
+
+## 16. Comment entrer chez eux ?
+
+- **Ernst & Young Maputo** : contact via le site institutionnel EY Mozambique (bureau de Maputo) ; portes d'entree : Direction Afrique australe EY, practice "Government & Public Sector" ; LinkedIn de la practice locale ; Ordem dos Contabilistas e Auditores de Mocambique.
+- **Verde Azul Consult** : societe mozambicaine locale - approche directe recommandee (siege Maputo), reseau des consultants environnementaux enregistres aupres du Ministerio da Terra e Ambiente mozambicain.
+- **Mota-Engil** : Direction Mozambique/Afrique australe (siege local Mota-Engil Mocambique), salons sectoriels BTP Afrique australe, associations sectorielles locales de la construction.
+- Portes d'entree transverses : Business Development / Bid Manager de chaque structure, LinkedIn (profils publics des dirigeants locaux), reunions du Groupe Consultatif Banque Mondiale Mozambique, anciens partenaires locaux SADMUN.
+
+## 17. SADMUN Value Proposition
+
+Pour ces prestataires (audit, ESIA, construction), SADMUN peut reduire : le cout de mobilisation locale (SADMUN dispose deja d'une implantation a Maputo - pas besoin d'ouvrir un bureau ni de recruter en propre), le risque administratif (permitting municipal, relations avec MOPHRH/MAEFP/Municipalite de Maputo deja cartographiees par SADMUN), et le delai de demarrage (hebergement, vehicules, personnel local deja disponibles via SADMUN plutot qu'a constituer ex nihilo). SADMUN ne concurrence pas ces entreprises sur leur coeur de metier (audit, ingenierie) mais securise leur execution operationnelle locale.
+
+## 18. Argumentaire commercial (specifique a ce projet)
+
+"MozResilience (P516379) est un projet de $166M a Maputo, porte par trois agences d'execution distinctes (MOPHRH, MAEFP, Municipalite de Maputo) - la coordination locale sera un facteur de risque cle. SADMUN connait deja ces trois interlocuteurs et peut securiser votre mobilisation logistique et administrative des l'attribution, pour que vous puissiez vous concentrer sur votre livrable technique."
+
+## 19. Preparation de rendez-vous (30 minutes)
+
+**Sujets a aborder :** calendrier previsionnel de publication du plan de passation de marches ; lots pressentis (audit, ESIA, ingenierie, construction) ; besoins de mobilisation locale.
+
+**Questions a poser :** "Avez-vous deja une presence operationnelle a Maputo pour ce type de mandat ?" ; "Qui est votre point de contact local actuel pour le permitting municipal ?"
+
+**Documents a montrer :** plaquette SADMUN, references locales (si disponibles et verifiees), carte des zones d'intervention a Maputo.
+
+**Engagements a proposer :** mise a disposition d'un point de contact SADMUN dedie des la publication du procurement plan ; proposition de devis logistique/administratif sous 5 jours ouvres apres attribution.
+
+## 20. Probabilite de succes
+
+- **Probabilite d'obtenir un rendez-vous :** Moyenne (projet encore en phase amont, aucun marche publie).
+- **Probabilite de devenir partenaire :** Faible a ce stade (aucun attributaire identifie - a reevaluer des publication du procurement plan).
+- **Probabilite d'obtenir une premiere mission :** Faible a court terme, Moyenne a 6-12 mois si SADMUN se positionne avant l'attribution.
+
+*(Estimations qualitatives, non statistiques - a ajuster au fil de la prospection reelle.)*
+
+## 21. Plan des 30 prochains jours
+
+- **Semaine 1 :** Verifier la publication du plan de passation de marches sur le portail Banque Mondiale et le portail national mozambicain ; identifier le point focal procurement au MOPHRH.
+- **Semaine 2 :** Prise de contact avec Ernst & Young Maputo et Verde Azul Consult pour presenter SADMUN (prise de contact strategique, pas de mandat specifique a ce stade).
+- **Semaine 3 :** Suivi des avis d'expression d'interet (EOI) eventuels lies au projet ; mise a jour du CRM.
+- **Semaine 4 :** Bilan du mois, decision de maintenir ou depriorite le dossier selon l'avancement reel de la passation de marches.
