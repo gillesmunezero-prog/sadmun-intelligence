@@ -2,15 +2,38 @@
 // Provider : PostgreSQL (Supabase). ORM : Prisma.
 // Ce schema couvre l'ensemble des tables demandees et leurs relations :
 // Projects -> Funding -> Companies -> DecisionMakers -> CRM -> Emails -> Meetings
+//
+// PHILOSOPHIE "DOSSIER COMMERCIAL" (v2) :
+// Chaque Project est enrichi d'un CommercialDossier (intelligence commerciale,
+// strategie de prospection, estimation financiere). Toutes les donnees relatives
+// a des personnes physiques ou entreprises portent des champs de tracabilite
+// (source, date de collecte, derniere verification, niveau de confiance, statut).
+// Regle d'or : une donnee manquante ("A qualifier") vaut mieux qu'une donnee fausse.
 
 generator client {
-  provider = "prisma-client-js"
+provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+provider = "postgresql"
+url = env("DATABASE_URL")
+directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// TRACABILITE DES DONNEES (metadonnees appliquees a chaque information sensible)
+// ---------------------------------------------------------------------------
+
+enum ConfidenceLevel {
+HIGH // Eleve : source officielle primaire, verifiee directement
+MEDIUM // Moyen : source publique indirecte ou non recente
+LOW // Faible : donnee deduite / non confirmee
+}
+
+enum VerificationStatus {
+VERIFIED // Verifie
+TO_VERIFY // A verifier
+OUTDATED // Obsolete
 }
 
 // ---------------------------------------------------------------------------
@@ -18,32 +41,32 @@ datasource db {
 // ---------------------------------------------------------------------------
 
 enum UserRole {
-  ADMIN
-  MANAGER
-  ANALYST
-  VIEWER
+ADMIN
+MANAGER
+ANALYST
+VIEWER
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  fullName      String
-  role          UserRole @default(ANALYST)
-  avatarUrl     String?
-  phone         String?
-  isActive      Boolean  @default(true)
-  lastLoginAt   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+id String @id @default(uuid())
+email String @unique
+fullName String
+role UserRole @default(ANALYST)
+avatarUrl String?
+phone String?
+isActive Boolean @default(true)
+lastLoginAt DateTime?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  tasksAssigned   Task[]        @relation("TaskAssignee")
-  notes           Note[]
-  interactions    Interaction[]
-  emailsSent      Email[]
-  documentsAdded  Document[]
-  crmOwned        CRM[]
+tasksAssigned Task[] @relation("TaskAssignee")
+notes Note[]
+interactions Interaction[]
+emailsSent Email[]
+documentsAdded Document[]
+crmOwned CRM[]
 
-  @@map("users")
+@@map("users")
 }
 
 // ---------------------------------------------------------------------------
@@ -51,31 +74,31 @@ model User {
 // ---------------------------------------------------------------------------
 
 enum OrganizationType {
-  FUNDER
-  NGO
-  GOVERNMENT
-  EXECUTING_AGENCY
-  MULTILATERAL
-  OTHER
+FUNDER
+NGO
+GOVERNMENT
+EXECUTING_AGENCY
+MULTILATERAL
+OTHER
 }
 
 model Organization {
-  id           String            @id @default(uuid())
-  name         String
-  type         OrganizationType
-  country      String?
-  website      String?
-  description  String?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+id String @id @default(uuid())
+name String
+type OrganizationType
+country String?
+website String?
+description String?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  fundedProjects    Project[]  @relation("ProjectFunder")
-  executedProjects  Project[]  @relation("ProjectExecutingAgency")
-  fundingRecords    Funding[]
-  procurementPlans  ProcurementPlan[]
-  sources           Source[]
+fundedProjects Project[] @relation("ProjectFunder")
+executedProjects Project[] @relation("ProjectExecutingAgency")
+fundingRecords Funding[]
+procurementPlans ProcurementPlan[]
+sources Source[]
 
-  @@map("organizations")
+@@map("organizations")
 }
 
 // ---------------------------------------------------------------------------
@@ -83,56 +106,64 @@ model Organization {
 // ---------------------------------------------------------------------------
 
 enum ProjectStatus {
-  WATCHING
-  OPEN
-  CLOSING_SOON
-  CLOSED
-  AWARDED
-  CANCELLED
+WATCHING
+OPEN
+CLOSING_SOON
+CLOSED
+AWARDED
+CANCELLED
 }
 
 model Project {
-  id                  String        @id @default(uuid())
-  name                String
-  description         String?
-  budget              Decimal?      @db.Decimal(18, 2)
-  currency             String?      @default("USD")
-  sector              String?
-  country             String?       @default("Mozambique")
-  province            String?
-  city                String?
-  latitude            Float?
-  longitude           Float?
-  funderId            String?
-  funder              Organization? @relation("ProjectFunder", fields: [funderId], references: [id])
-  executingAgencyId   String?
-  executingAgency     Organization? @relation("ProjectExecutingAgency", fields: [executingAgencyId], references: [id])
-  publicationDate     DateTime?
-  deadlineDate        DateTime?
-  status              ProjectStatus @default(WATCHING)
-  sadmunProbability   Int           @default(0) // 0-100
-  officialUrl         String?
-  tags                String[]
-  sourceId            String?
-  source              Source?       @relation(fields: [sourceId], references: [id])
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+id String @id @default(uuid())
+name String
+description String?
+budget Decimal? @db.Decimal(18, 2)
+currency String? @default("USD")
+sector String?
+country String? @default("Mozambique")
+province String?
+city String?
+latitude Float?
+longitude Float?
+funderId String?
+funder Organization? @relation("ProjectFunder", fields: [funderId], references: [id])
+executingAgencyId String?
+executingAgency Organization? @relation("ProjectExecutingAgency", fields: [executingAgencyId], references: [id])
+publicationDate DateTime?
+deadlineDate DateTime?
+status ProjectStatus @default(WATCHING)
+sadmunProbability Int @default(0) // 0-100
+officialUrl String?
+tags String[]
+sourceId String?
+source Source? @relation(fields: [sourceId], references: [id])
+// Tracabilite des donnees factuelles du projet (budget, dates, bailleur...)
+dataSourceUrl String?
+dataSourceName String?
+dataCollectedAt DateTime?
+dataLastVerifiedAt DateTime?
+dataConfidenceLevel ConfidenceLevel @default(MEDIUM)
+dataVerificationStatus VerificationStatus @default(TO_VERIFY)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  tenders             Tender[]
-  funding             Funding[]
-  documents           Document[]
-  companyMatches      ProjectCompanyMatch[]
-  decisionMakerLinks  ProjectDecisionMaker[]
-  procurementPlans    ProcurementPlan[]
-  notes               Note[]
-  tasks               Task[]
-  emails              Email[]
-  meetings            Meeting[]
-  interactions        Interaction[]
-  consultantLinks     ConsultantProject[]
-  watchItems          WatchItem[]
+tenders Tender[]
+funding Funding[]
+documents Document[]
+companyMatches ProjectCompanyMatch[]
+decisionMakerLinks ProjectDecisionMaker[]
+procurementPlans ProcurementPlan[]
+notes Note[]
+tasks Task[]
+emails Email[]
+meetings Meeting[]
+interactions Interaction[]
+consultantLinks ConsultantProject[]
+watchItems WatchItem[]
+dossier CommercialDossier?
 
-  @@map("projects")
+@@map("projects")
 }
 
 // ---------------------------------------------------------------------------
@@ -140,31 +171,31 @@ model Project {
 // ---------------------------------------------------------------------------
 
 enum TenderStatus {
-  DRAFT
-  PUBLISHED
-  UNDER_EVALUATION
-  AWARDED
-  CANCELLED
+DRAFT
+PUBLISHED
+UNDER_EVALUATION
+AWARDED
+CANCELLED
 }
 
 model Tender {
-  id                 String        @id @default(uuid())
-  projectId          String
-  project            Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  reference          String?
-  title              String
-  summary            String?
-  budgetEstimate     Decimal?      @db.Decimal(18, 2)
-  publicationDate    DateTime?
-  submissionDeadline DateTime?
-  status             TenderStatus  @default(PUBLISHED)
-  officialUrl        String?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+id String @id @default(uuid())
+projectId String
+project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+reference String?
+title String
+summary String?
+budgetEstimate Decimal? @db.Decimal(18, 2)
+publicationDate DateTime?
+submissionDeadline DateTime?
+status TenderStatus @default(PUBLISHED)
+officialUrl String?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  documents          Document[]
+documents Document[]
 
-  @@map("tenders")
+@@map("tenders")
 }
 
 // ---------------------------------------------------------------------------
@@ -172,19 +203,22 @@ model Tender {
 // ---------------------------------------------------------------------------
 
 model Funding {
-  id              String        @id @default(uuid())
-  projectId       String
-  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  organizationId  String
-  organization    Organization  @relation(fields: [organizationId], references: [id])
-  amount          Decimal?      @db.Decimal(18, 2)
-  currency        String?       @default("USD")
-  instrumentType  String?       // ex: prêt, don, garantie
-  notes           String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+id String @id @default(uuid())
+projectId String
+project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+organizationId String
+organization Organization @relation(fields: [organizationId], references: [id])
+amount Decimal? @db.Decimal(18, 2)
+currency String? @default("USD")
+instrumentType String? // ex: pret, don, garantie
+notes String?
+sourceUrl String?
+confidenceLevel ConfidenceLevel @default(MEDIUM)
+verificationStatus VerificationStatus @default(TO_VERIFY)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  @@map("funding")
+@@map("funding")
 }
 
 // ---------------------------------------------------------------------------
@@ -192,109 +226,130 @@ model Funding {
 // ---------------------------------------------------------------------------
 
 model Company {
-  id                  String   @id @default(uuid())
-  name                String
-  country             String?
-  website             String?
-  sector              String?
-  description         String?
-  africaHistory       String?
-  mozambiqueHistory   String?
-  rating              Int?     // 1 a 5
-  comments            String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+id String @id @default(uuid())
+name String
+country String?
+website String?
+sector String?
+description String?
+africaHistory String?
+mozambiqueHistory String?
+rating Int? // 1 a 5
+comments String?
+sourceUrl String?
+dataCollectedAt DateTime?
+lastVerifiedAt DateTime?
+confidenceLevel ConfidenceLevel @default(MEDIUM)
+verificationStatus VerificationStatus @default(TO_VERIFY)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  contacts            Contact[]
-  decisionMakers      DecisionMaker[]
-  wonProjects         CompanyWonProject[]
-  matches             ProjectCompanyMatch[]
-  crmRecords          CRM[]
-  tasks               Task[]
-  notes               Note[]
-  documents           Document[]
-  emails              Email[]
-  meetings            Meeting[]
+contacts Contact[]
+decisionMakers DecisionMaker[]
+wonProjects CompanyWonProject[]
+matches ProjectCompanyMatch[]
+crmRecords CRM[]
+tasks Task[]
+notes Note[]
+documents Document[]
+emails Email[]
+meetings Meeting[]
 
-  @@map("companies")
+@@map("companies")
 }
 
 model CompanyWonProject {
-  id          String   @id @default(uuid())
-  companyId   String
-  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  projectName String
-  year        Int?
-  value       Decimal? @db.Decimal(18, 2)
-  role        String?
-  notes       String?
-  createdAt   DateTime @default(now())
+id String @id @default(uuid())
+companyId String
+company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+projectName String
+year Int?
+value Decimal? @db.Decimal(18, 2)
+role String?
+notes String?
+sourceUrl String?
+confidenceLevel ConfidenceLevel @default(MEDIUM)
+createdAt DateTime @default(now())
 
-  @@map("company_won_projects")
+@@map("company_won_projects")
 }
 
 model Contact {
-  id         String   @id @default(uuid())
-  companyId  String
-  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  fullName   String
-  role       String?
-  email      String?
-  phone      String?
-  linkedin   String?
-  notes      String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+id String @id @default(uuid())
+companyId String
+company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+fullName String
+role String?
+email String?
+phone String?
+linkedin String?
+notes String?
+sourceUrl String?
+dataCollectedAt DateTime?
+lastVerifiedAt DateTime?
+confidenceLevel ConfidenceLevel @default(LOW)
+verificationStatus VerificationStatus @default(TO_VERIFY)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  @@map("contacts")
+@@map("contacts")
 }
 
 // ---------------------------------------------------------------------------
 // DECIDEURS
+// Regle : aucune invention. Si une information n'est pas publique et verifiable
+// (site officiel, communique, organigramme public, LinkedIn public, registre
+// public), le champ reste vide et verificationStatus = TO_VERIFY ("A qualifier").
 // ---------------------------------------------------------------------------
 
 model DecisionMaker {
-  id              String    @id @default(uuid())
-  companyId       String
-  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  fullName        String
-  position        String    // ex: Managing Director Africa, Country Director, Bid Manager...
-  linkedin        String?
-  email           String?
-  phone           String?
-  address         String?
-  country         String?
-  influenceScore  Int?      // 1 a 5
-  canDecide        Boolean   @default(false)
-  comments        String?
-  lastVerifiedAt  DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+id String @id @default(uuid())
+companyId String
+company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+fullName String
+position String // ex: Managing Director Africa, Country Director, Bid Manager...
+linkedin String?
+email String?
+phone String?
+address String?
+country String?
+biography String?
+influenceScore Int? // 1 a 5
+canDecide Boolean @default(false)
+comments String?
+sourceUrl String?
+sourceName String?
+dataCollectedAt DateTime?
+lastVerifiedAt DateTime?
+confidenceLevel ConfidenceLevel @default(LOW)
+verificationStatus VerificationStatus @default(TO_VERIFY)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  projectLinks    ProjectDecisionMaker[]
-  interactions    Interaction[]
-  tasks           Task[]
-  notes           Note[]
-  emails          Email[]
-  meetingAttendees MeetingAttendee[]
-  crmContacted    CRM[]     @relation("CRMContactedPerson")
+projectLinks ProjectDecisionMaker[]
+interactions Interaction[]
+tasks Task[]
+notes Note[]
+emails Email[]
+meetingAttendees MeetingAttendee[]
+crmContacted CRM[] @relation("CRMContactedPerson")
 
-  @@map("decision_makers")
+@@map("decision_makers")
 }
 
 // Ordre de prospection et role d'un decideur sur un projet donne
 model ProjectDecisionMaker {
-  id              String        @id @default(uuid())
-  projectId       String
-  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  decisionMakerId String
-  decisionMaker   DecisionMaker @relation(fields: [decisionMakerId], references: [id], onDelete: Cascade)
-  contactOrder    Int           @default(1) // ordre de prospection recommande
-  reason          String?
-  createdAt       DateTime      @default(now())
+id String @id @default(uuid())
+projectId String
+project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+decisionMakerId String
+decisionMaker DecisionMaker @relation(fields: [decisionMakerId], references: [id], onDelete: Cascade)
+contactOrder Int @default(1) // ordre de prospection recommande
+reason String?
+createdAt DateTime @default(now())
 
-  @@unique([projectId, decisionMakerId])
-  @@map("project_decision_makers")
+@@unique([projectId, decisionMakerId])
+@@map("project_decision_makers")
 }
 
 // ---------------------------------------------------------------------------
@@ -302,34 +357,37 @@ model ProjectDecisionMaker {
 // ---------------------------------------------------------------------------
 
 model Consultant {
-  id          String   @id @default(uuid())
-  name        String
-  isFirm      Boolean  @default(false)
-  sector      String?
-  country     String?
-  email       String?
-  phone       String?
-  linkedin    String?
-  notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+id String @id @default(uuid())
+name String
+isFirm Boolean @default(false)
+sector String?
+country String?
+email String?
+phone String?
+linkedin String?
+notes String?
+sourceUrl String?
+confidenceLevel ConfidenceLevel @default(LOW)
+verificationStatus VerificationStatus @default(TO_VERIFY)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  projectLinks ConsultantProject[]
+projectLinks ConsultantProject[]
 
-  @@map("consultants")
+@@map("consultants")
 }
 
 model ConsultantProject {
-  id            String     @id @default(uuid())
-  consultantId  String
-  consultant    Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
-  projectId     String
-  project       Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  role          String?
-  createdAt     DateTime   @default(now())
+id String @id @default(uuid())
+consultantId String
+consultant Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+projectId String
+project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+role String?
+createdAt DateTime @default(now())
 
-  @@unique([consultantId, projectId])
-  @@map("consultant_projects")
+@@unique([consultantId, projectId])
+@@map("consultant_projects")
 }
 
 // ---------------------------------------------------------------------------
@@ -337,20 +395,20 @@ model ConsultantProject {
 // ---------------------------------------------------------------------------
 
 model ProcurementPlan {
-  id              String        @id @default(uuid())
-  projectId       String
-  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  organizationId  String?
-  organization    Organization? @relation(fields: [organizationId], references: [id])
-  title           String
-  fiscalYear      Int?
-  plannedDate     DateTime?
-  description     String?
-  documentUrl     String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+id String @id @default(uuid())
+projectId String
+project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+organizationId String?
+organization Organization? @relation(fields: [organizationId], references: [id])
+title String
+fiscalYear Int?
+plannedDate DateTime?
+description String?
+documentUrl String?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  @@map("procurement_plans")
+@@map("procurement_plans")
 }
 
 // ---------------------------------------------------------------------------
@@ -358,34 +416,34 @@ model ProcurementPlan {
 // ---------------------------------------------------------------------------
 
 enum CRMResult {
-  NO_ANSWER
-  INTERESTED
-  NOT_INTERESTED
-  MEETING_SCHEDULED
-  PARTNERSHIP_AGREED
-  ON_HOLD
+NO_ANSWER
+INTERESTED
+NOT_INTERESTED
+MEETING_SCHEDULED
+PARTNERSHIP_AGREED
+ON_HOLD
 }
 
 model CRM {
-  id                       String     @id @default(uuid())
-  companyId                String
-  company                  Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  ownerId                  String?
-  owner                    User?      @relation(fields: [ownerId], references: [id])
-  lastContactDate          DateTime?
-  contactedPersonId        String?
-  contactedPerson          DecisionMaker? @relation("CRMContactedPerson", fields: [contactedPersonId], references: [id])
-  lastResult               CRMResult?
-  nextFollowUpDate         DateTime?
-  documentsSent            String[]
-  partnershipProbability   Int?       // 0-100
-  comments                 String?
-  createdAt                DateTime   @default(now())
-  updatedAt                DateTime   @updatedAt
+id String @id @default(uuid())
+companyId String
+company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+ownerId String?
+owner User? @relation(fields: [ownerId], references: [id])
+lastContactDate DateTime?
+contactedPersonId String?
+contactedPerson DecisionMaker? @relation("CRMContactedPerson", fields: [contactedPersonId], references: [id])
+lastResult CRMResult?
+nextFollowUpDate DateTime?
+documentsSent String[]
+partnershipProbability Int? // 0-100
+comments String?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  interactions             Interaction[]
+interactions Interaction[]
 
-  @@map("crm_records")
+@@map("crm_records")
 }
 
 // ---------------------------------------------------------------------------
@@ -393,30 +451,30 @@ model CRM {
 // ---------------------------------------------------------------------------
 
 enum InteractionType {
-  CALL
-  EMAIL
-  MEETING
-  LINKEDIN
-  NOTE
-  OTHER
+CALL
+EMAIL
+MEETING
+LINKEDIN
+NOTE
+OTHER
 }
 
 model Interaction {
-  id          String           @id @default(uuid())
-  crmId       String?
-  crm         CRM?             @relation(fields: [crmId], references: [id], onDelete: Cascade)
-  projectId   String?
-  project     Project?         @relation(fields: [projectId], references: [id])
-  decisionMakerId String?
-  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
-  type        InteractionType
-  date        DateTime         @default(now())
-  summary     String
-  userId      String?
-  user        User?            @relation(fields: [userId], references: [id])
-  createdAt   DateTime         @default(now())
+id String @id @default(uuid())
+crmId String?
+crm CRM? @relation(fields: [crmId], references: [id], onDelete: Cascade)
+projectId String?
+project Project? @relation(fields: [projectId], references: [id])
+decisionMakerId String?
+decisionMaker DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+type InteractionType
+date DateTime @default(now())
+summary String
+userId String?
+user User? @relation(fields: [userId], references: [id])
+createdAt DateTime @default(now())
 
-  @@map("interactions")
+@@map("interactions")
 }
 
 // ---------------------------------------------------------------------------
@@ -424,49 +482,49 @@ model Interaction {
 // ---------------------------------------------------------------------------
 
 enum TaskType {
-  CALL
-  EMAIL
-  FOLLOW_UP
-  PRESENTATION
-  QUOTE
-  MEETING
-  OTHER
+CALL
+EMAIL
+FOLLOW_UP
+PRESENTATION
+QUOTE
+MEETING
+OTHER
 }
 
 enum TaskStatus {
-  TODO
-  IN_PROGRESS
-  DONE
-  CANCELLED
+TODO
+IN_PROGRESS
+DONE
+CANCELLED
 }
 
 enum TaskPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
+LOW
+MEDIUM
+HIGH
+URGENT
 }
 
 model Task {
-  id              String       @id @default(uuid())
-  title           String
-  type            TaskType
-  status          TaskStatus   @default(TODO)
-  priority        TaskPriority @default(MEDIUM)
-  dueDate         DateTime?
-  projectId       String?
-  project         Project?     @relation(fields: [projectId], references: [id])
-  companyId       String?
-  company         Company?     @relation(fields: [companyId], references: [id])
-  decisionMakerId String?
-  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
-  assignedToId    String?
-  assignedTo      User?        @relation("TaskAssignee", fields: [assignedToId], references: [id])
-  notes           String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+id String @id @default(uuid())
+title String
+type TaskType
+status TaskStatus @default(TODO)
+priority TaskPriority @default(MEDIUM)
+dueDate DateTime?
+projectId String?
+project Project? @relation(fields: [projectId], references: [id])
+companyId String?
+company Company? @relation(fields: [companyId], references: [id])
+decisionMakerId String?
+decisionMaker DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+assignedToId String?
+assignedTo User? @relation("TaskAssignee", fields: [assignedToId], references: [id])
+notes String?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  @@map("tasks")
+@@map("tasks")
 }
 
 // ---------------------------------------------------------------------------
@@ -474,20 +532,20 @@ model Task {
 // ---------------------------------------------------------------------------
 
 model Note {
-  id              String    @id @default(uuid())
-  content         String
-  projectId       String?
-  project         Project?  @relation(fields: [projectId], references: [id])
-  companyId       String?
-  company         Company?  @relation(fields: [companyId], references: [id])
-  decisionMakerId String?
-  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
-  authorId        String?
-  author          User?     @relation(fields: [authorId], references: [id])
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+id String @id @default(uuid())
+content String
+projectId String?
+project Project? @relation(fields: [projectId], references: [id])
+companyId String?
+company Company? @relation(fields: [companyId], references: [id])
+decisionMakerId String?
+decisionMaker DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+authorId String?
+author User? @relation(fields: [authorId], references: [id])
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  @@map("notes")
+@@map("notes")
 }
 
 // ---------------------------------------------------------------------------
@@ -495,29 +553,29 @@ model Note {
 // ---------------------------------------------------------------------------
 
 enum EmailStatus {
-  DRAFT
-  SENT
-  FAILED
+DRAFT
+SENT
+FAILED
 }
 
 model Email {
-  id              String       @id @default(uuid())
-  subject         String
-  body            String
-  templateType    String?
-  projectId       String?
-  project         Project?     @relation(fields: [projectId], references: [id])
-  companyId       String?
-  company         Company?     @relation(fields: [companyId], references: [id])
-  decisionMakerId String?
-  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
-  fromUserId      String?
-  fromUser        User?        @relation(fields: [fromUserId], references: [id])
-  status          EmailStatus  @default(DRAFT)
-  sentAt          DateTime?
-  createdAt       DateTime     @default(now())
+id String @id @default(uuid())
+subject String
+body String
+templateType String?
+projectId String?
+project Project? @relation(fields: [projectId], references: [id])
+companyId String?
+company Company? @relation(fields: [companyId], references: [id])
+decisionMakerId String?
+decisionMaker DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+fromUserId String?
+fromUser User? @relation(fields: [fromUserId], references: [id])
+status EmailStatus @default(DRAFT)
+sentAt DateTime?
+createdAt DateTime @default(now())
 
-  @@map("emails")
+@@map("emails")
 }
 
 // ---------------------------------------------------------------------------
@@ -525,42 +583,42 @@ model Email {
 // ---------------------------------------------------------------------------
 
 enum MeetingStatus {
-  SCHEDULED
-  DONE
-  CANCELLED
+SCHEDULED
+DONE
+CANCELLED
 }
 
 model Meeting {
-  id            String        @id @default(uuid())
-  title         String
-  projectId     String?
-  project       Project?      @relation(fields: [projectId], references: [id])
-  companyId     String?
-  company       Company?      @relation(fields: [companyId], references: [id])
-  scheduledAt   DateTime
-  durationMinutes Int?        @default(60)
-  location      String?
-  notes         String?
-  status        MeetingStatus @default(SCHEDULED)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+id String @id @default(uuid())
+title String
+projectId String?
+project Project? @relation(fields: [projectId], references: [id])
+companyId String?
+company Company? @relation(fields: [companyId], references: [id])
+scheduledAt DateTime
+durationMinutes Int? @default(60)
+location String?
+notes String?
+status MeetingStatus @default(SCHEDULED)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  attendees     MeetingAttendee[]
+attendees MeetingAttendee[]
 
-  @@map("meetings")
+@@map("meetings")
 }
 
 model MeetingAttendee {
-  id              String         @id @default(uuid())
-  meetingId       String
-  meeting         Meeting        @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  decisionMakerId String?
-  decisionMaker   DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
-  externalName    String?
-  externalEmail   String?
-  createdAt       DateTime       @default(now())
+id String @id @default(uuid())
+meetingId String
+meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+decisionMakerId String?
+decisionMaker DecisionMaker? @relation(fields: [decisionMakerId], references: [id])
+externalName String?
+externalEmail String?
+createdAt DateTime @default(now())
 
-  @@map("meeting_attendees")
+@@map("meeting_attendees")
 }
 
 // ---------------------------------------------------------------------------
@@ -568,21 +626,21 @@ model MeetingAttendee {
 // ---------------------------------------------------------------------------
 
 model Document {
-  id            String   @id @default(uuid())
-  projectId     String?
-  project       Project? @relation(fields: [projectId], references: [id])
-  tenderId      String?
-  tender        Tender?  @relation(fields: [tenderId], references: [id])
-  companyId     String?
-  company       Company? @relation(fields: [companyId], references: [id])
-  title         String
-  fileUrl       String
-  fileType      String?
-  uploadedById  String?
-  uploadedBy    User?    @relation(fields: [uploadedById], references: [id])
-  createdAt     DateTime @default(now())
+id String @id @default(uuid())
+projectId String?
+project Project? @relation(fields: [projectId], references: [id])
+tenderId String?
+tender Tender? @relation(fields: [tenderId], references: [id])
+companyId String?
+company Company? @relation(fields: [companyId], references: [id])
+title String
+fileUrl String
+fileType String?
+uploadedById String?
+uploadedBy User? @relation(fields: [uploadedById], references: [id])
+createdAt DateTime @default(now())
 
-  @@map("documents")
+@@map("documents")
 }
 
 // ---------------------------------------------------------------------------
@@ -590,47 +648,47 @@ model Document {
 // ---------------------------------------------------------------------------
 
 model Source {
-  id             String        @id @default(uuid())
-  name           String
-  url            String
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  country        String?
-  isActive       Boolean       @default(true)
-  lastCheckedAt  DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+id String @id @default(uuid())
+name String
+url String
+organizationId String?
+organization Organization? @relation(fields: [organizationId], references: [id])
+country String?
+isActive Boolean @default(true)
+lastCheckedAt DateTime?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  projects       Project[]
-  watchItems     WatchItem[]
+projects Project[]
+watchItems WatchItem[]
 
-  @@map("sources")
+@@map("sources")
 }
 
 enum WatchItemType {
-  NEW_TENDER
-  NEW_FUNDING
-  NEW_DECISION_MAKER
-  NEW_HIRE
-  NEW_CONSULTANT
-  NEW_CONSORTIUM
+NEW_TENDER
+NEW_FUNDING
+NEW_DECISION_MAKER
+NEW_HIRE
+NEW_CONSULTANT
+NEW_CONSORTIUM
 }
 
 model WatchItem {
-  id           String        @id @default(uuid())
-  sourceId     String
-  source       Source        @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  type         WatchItemType
-  title        String
-  description  String?
-  url          String?
-  projectId    String?
-  project      Project?      @relation(fields: [projectId], references: [id])
-  detectedAt   DateTime      @default(now())
-  isProcessed  Boolean       @default(false)
-  createdAt    DateTime      @default(now())
+id String @id @default(uuid())
+sourceId String
+source Source @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+type WatchItemType
+title String
+description String?
+url String?
+projectId String?
+project Project? @relation(fields: [projectId], references: [id])
+detectedAt DateTime @default(now())
+isProcessed Boolean @default(false)
+createdAt DateTime @default(now())
 
-  @@map("watch_items")
+@@map("watch_items")
 }
 
 // ---------------------------------------------------------------------------
@@ -638,16 +696,80 @@ model WatchItem {
 // ---------------------------------------------------------------------------
 
 model ProjectCompanyMatch {
-  id          String   @id @default(uuid())
-  projectId   String
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  companyId   String
-  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  score       Int      // 0 a 100
-  reasons     String[] // explications du score (ex: "A remporte des projets similaires")
-  computedAt  DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+id String @id @default(uuid())
+projectId String
+project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+companyId String
+company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+score Int // 0 a 100
+reasons String[] // explications du score (ex: "A remporte des projets similaires")
+confidenceLevel ConfidenceLevel @default(MEDIUM)
+computedAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 
-  @@unique([projectId, companyId])
-  @@map("project_company_matches")
+@@unique([projectId, companyId])
+@@map("project_company_matches")
+}
+
+// ---------------------------------------------------------------------------
+// DOSSIER COMMERCIAL (coeur de la plateforme v2)
+// Un dossier commercial transforme un appel d'offres/projet en opportunite
+// commerciale exploitable : resume, analyse IA, opportunites SADMUN,
+// strategie de prospection, plan d'action, estimation financiere.
+// ---------------------------------------------------------------------------
+
+model CommercialDossier {
+id String @id @default(uuid())
+projectId String @unique
+project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+// Resume et analyse IA
+aiSummary String?
+contextAnalysis String?
+riskAnalysis String?
+localNeedsAnalysis String?
+logisticsNeedsAnalysis String?
+administrativeNeedsAnalysis String?
+communityNeedsAnalysis String?
+environmentalNeedsAnalysis String?
+difficultyLevel Int? // 1 (facile) a 5 (tres difficile)
+
+// Opportunites pour SADMUN
+whyInterestsUs String?
+whatWeCanSell String[]
+whatWeCannotSell String[]
+partnersToFind String[]
+skillsToAcquire String[]
+
+// Estimation financiere
+estimatedRevenueMinUsd Decimal? @db.Decimal(18, 2)
+estimatedRevenueMaxUsd Decimal? @db.Decimal(18, 2)
+estimatedMarginPct Int?
+estimatedDurationMonths Int?
+estimatedStaffCount Int?
+estimatedVehiclesCount Int?
+estimatedHousingUnits Int?
+
+// Strategie de prospection
+contactStrategy String?
+prospectionMessage String?
+
+// Plan d'action
+actionPlanToday String?
+actionPlanThisWeek String?
+actionPlanThisMonth String?
+actionPlanBeforeDeadline String?
+actionPlanAfterAward String?
+
+// Tracabilite globale du dossier
+sourcesUsed String[]
+collectedAt DateTime @default(now())
+lastVerifiedAt DateTime?
+confidenceLevel ConfidenceLevel @default(MEDIUM)
+status VerificationStatus @default(TO_VERIFY)
+
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+
+@@map("commercial_dossiers")
 }
