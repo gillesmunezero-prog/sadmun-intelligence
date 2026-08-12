@@ -150,6 +150,31 @@ tr.rank-row:hover td{background:var(--card-hover);}
 .fade-in{animation:fadeIn .25s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 @media(max-width:900px){.sidebar{display:none;}.kpi-row{grid-template-columns:repeat(2,1fr);}.detail-grid{grid-template-columns:1fr;}}
+.signal-banner{border-radius:var(--radius);padding:18px 22px;margin-bottom:20px;border:1px solid var(--border);}
+.signal-banner.sig-critical{background:linear-gradient(90deg,rgba(234,90,109,.18),rgba(234,90,109,.05));border-color:var(--red);}
+.signal-banner.sig-high{background:linear-gradient(90deg,rgba(47,214,167,.18),rgba(47,214,167,.05));border-color:var(--accent);}
+.signal-banner.sig-mid{background:linear-gradient(90deg,rgba(240,182,73,.18),rgba(240,182,73,.05));border-color:var(--amber);}
+.signal-banner.sig-low{background:linear-gradient(90deg,rgba(124,136,153,.18),rgba(124,136,153,.05));border-color:var(--gray);}
+.signal-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);font-weight:700;margin-bottom:6px;}
+.signal-niveau{font-size:19px;font-weight:800;margin-bottom:6px;}
+.sig-critical .signal-niveau{color:var(--red);}
+.sig-high .signal-niveau{color:var(--accent);}
+.sig-mid .signal-niveau{color:var(--amber);}
+.sig-low .signal-niveau{color:var(--gray);}
+.signal-raison{font-size:13px;color:#c6d0dc;line-height:1.5;}
+.decision-banner{border-radius:10px;padding:10px 14px;font-size:12.5px;font-weight:600;margin-bottom:12px;}
+.decision-banner.qualify{background:var(--red-soft);color:var(--red);border:1px dashed var(--red);}
+.vente-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.vente-col h4{font-size:12.5px;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px 0;}
+.action-callout{background:linear-gradient(135deg,rgba(47,214,167,.14),rgba(47,214,167,.03));
+border:1px solid var(--accent);border-radius:var(--radius);padding:20px 22px;margin-bottom:14px;}
+.action-callout-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.action-callout-text{font-size:15px;font-weight:700;margin-bottom:12px;line-height:1.45;}
+.action-meta{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--text-dim);}
+.action-meta strong{color:var(--text);}
+.note-inline{color:var(--text-dim);font-size:12.5px;}
+@media(max-width:900px){.vente-grid{grid-template-columns:1fr;}}
+
 </style>
 </head>
 <body>
@@ -470,40 +495,39 @@ function renderProjectsGrid(main){
 var ACTIVE_REGION = "Europe";
 var REGIONS = ["Europe","Amerique du Nord","Asie","Moyen-Orient","Afrique (hors Mozambique)","Mozambique"];
 
-function nextAction(c){
-  if(c.crm === "Jamais contactee") return "Identifier interlocuteur (site officiel / LinkedIn) et preparer premier contact";
-  return "A definir";
-}
 
 function rankTable(list){
-  var rows = list.map(function(c, idx){
-    var rankCls = idx < 3 ? "rank-num top3" : "rank-num";
-    return "<tr class=\"rank-row\" onclick=\"location.hash='#/company/" + encodeURIComponent(c.name) + "'\">" +
-      "<td><span class=\"" + rankCls + "\">" + (idx+1) + "</span></td>" +
-      "<td><strong>" + esc(c.name) + "</strong></td>" +
-      "<td>" + esc(c.country) + "</td>" +
-      "<td>" + esc(c.sector) + "</td>" +
-      "<td><strong style=\"color:var(--accent)\">" + c.score + "</strong></td>" +
-      "<td>" + mozTag(c.moz) + "</td>" +
-      "<td>" + esc(c.crm) + "</td>" +
-      "<td style=\"color:var(--text-dim);font-size:12px;\">" + esc(nextAction(c)) + "</td>" +
-      "</tr>";
-  }).join("");
-  return "<div class=\"table-wrap\"><table><thead><tr><th></th><th>Entreprise</th><th>Pays</th><th>Secteur</th>" +
-    "<th>Score</th><th>Presence Mozambique</th><th>Statut CRM</th><th>Prochaine action</th></tr></thead>" +
-    "<tbody>" + rows + "</tbody></table></div>";
+var rows = list.map(function(c, idx){
+var rankCls = idx < 3 ? "rank-num top3" : "rank-num";
+var sig = getSignalInfo(c);
+var sigCell = sig ? signalTag(sig.niveau) : "<span class=\"tag tag-gray\">-</span>";
+return "<tr class=\"rank-row\" onclick=\"location.hash='#/company/" + encodeURIComponent(c.name) + "'\">" +
+"<td><span class=\"" + rankCls + "\">" + (idx+1) + "</span></td>" +
+"<td><strong>" + esc(c.name) + "</strong></td>" +
+"<td>" + esc(c.country) + "</td>" +
+"<td>" + esc(c.sector) + "</td>" +
+"<td><strong style=\"color:var(--accent)\">" + c.score + "</strong></td>" +
+"<td>" + mozTag(c.moz) + "</td>" +
+"<td>" + sigCell + "</td>" +
+"<td style=\"color:var(--text-dim);font-size:12px;\">" + esc(contactLabel(c)) + "</td>" +
+"<td>" + crmTag(c.crm) + "</td>" +
+"<td style=\"color:var(--text-dim);font-size:12px;max-width:260px;\">" + esc(nextAction(c)) + "</td>" +
+"</tr>";
+}).join("");
+return "<div class=\"table-wrap\"><table><thead><tr><th></th><th>Entreprise</th><th>Pays</th><th>Secteur</th>" +
+"<th>Score</th><th>Presence Mozambique</th><th>Signal commercial</th><th>Contact disponible</th><th>Statut CRM</th><th>Prochaine action</th></tr></thead>" +
+"<tbody>" + rows + "</tbody></table></div>";
 }
-
 function companyMiniCard(c){
-  return "<div class=\"card\" onclick=\"location.hash='#/company/" + encodeURIComponent(c.name) + "'\">" +
-    "<div class=\"card-top\"><span class=\"card-id\">" + esc(c.country) + "</span>" + tierTag(c.tier) + "</div>" +
-    "<div class=\"card-title\">" + esc(c.name) + "</div>" +
-    "<div class=\"card-meta\">" + esc(c.sector) + "</div>" +
-    "<div class=\"card-foot\">" +
-    "<span class=\"tag tag-gray\">Score " + c.score + "</span>" + mozTag(c.moz) +
-    "</div></div>";
+var sig = getSignalInfo(c);
+return "<div class=\"card\" onclick=\"location.hash='#/company/" + encodeURIComponent(c.name) + "'\">" +
+"<div class=\"card-top\"><span class=\"card-id\">" + esc(c.country) + "</span>" + tierTag(c.tier) + "</div>" +
+"<div class=\"card-title\">" + esc(c.name) + "</div>" +
+"<div class=\"card-meta\">" + esc(c.sector) + "</div>" +
+"<div class=\"card-foot\">" +
+"<span class=\"tag tag-gray\">Score " + c.score + "</span>" + mozTag(c.moz) + (sig ? signalTag(sig.niveau) : "") + crmTag(c.crm) +
+"</div></div>";
 }
-
 function setRegion(r){
   ACTIVE_REGION = r;
   var main = document.getElementById("main");
@@ -571,6 +595,132 @@ function renderCompaniesHome(main){
 }
 
 
+
+var CRM_STAGES = ["Jamais contacte","A contacter","Premier contact","Presentation envoyee","Reunion obtenue","Partenaire potentiel","NDA","Accord de partenariat","Reference","Mission"];
+function crmTag(status){
+var s = status || "Jamais contacte";
+var idx = CRM_STAGES.indexOf(s);
+var cls = "tag-gray";
+if(idx >= 6) cls = "tag-green";
+else if(idx >= 1) cls = "tag-amber";
+return "<span class=\"tag " + cls + "\">" + esc(s) + "</span>";
+}
+function findExtra(c, re){
+var arr = c.extra || [];
+for(var i=0;i<arr.length;i++){ if(re.test(arr[i].heading)) return arr[i]; }
+return null;
+}
+function kvFromLines(lines, key){
+var re = new RegExp("^-\\s*" + key + "\\s*:\\s*(.+)$", "i");
+for(var i=0;i<lines.length;i++){
+var m = lines[i].trim().match(re);
+if(m) return m[1].trim();
+}
+return null;
+}
+function getSignalInfo(c){
+var sec = findExtra(c, /^Signal commercial$/i);
+if(!sec) return null;
+var niveau = kvFromLines(sec.lines, "Niveau") || "A qualifier";
+var raison = kvFromLines(sec.lines, "Raison") || "";
+return {niveau: niveau, raison: raison};
+}
+function signalClass(niveau){
+var n = (niveau || "").toLowerCase();
+if(n.indexOf("tres fort") !== -1) return "sig-critical";
+if(n.indexOf("fort") !== -1) return "sig-high";
+if(n.indexOf("moyen") !== -1) return "sig-mid";
+return "sig-low";
+}
+function signalTag(niveau){
+var cls = signalClass(niveau);
+var map = {"sig-critical":"tag-red","sig-high":"tag-green","sig-mid":"tag-amber","sig-low":"tag-gray"};
+return "<span class=\"tag " + map[cls] + "\">" + esc(niveau) + "</span>";
+}
+function getNextActionInfo(c){
+var sec = findExtra(c, /^Prochaine action$/i);
+if(!sec) return null;
+return {
+action: kvFromLines(sec.lines, "Action prioritaire") || "",
+date: kvFromLines(sec.lines, "Date cible") || "",
+canal: kvFromLines(sec.lines, "Canal conseille") || "",
+objectif: kvFromLines(sec.lines, "Objectif") || ""
+};
+}
+function getContactInfo(c){
+var sec = findExtra(c, /^Qui contacter$/i);
+if(!sec) return {hasNominative:false, hasInstitutional:false, aQualifier:true};
+var text = sec.lines.join("\n");
+var hasTable = /\|/.test(text) && /Nom\s*\|/.test(text);
+var hasInstitutional = /Email general\s*:/i.test(text) || /Telephone\s*:/i.test(text);
+var aQualifier = /Decideur a qualifier/i.test(text) && !hasTable;
+return {hasNominative: hasTable, hasInstitutional: hasInstitutional, aQualifier: aQualifier};
+}
+function contactLabel(c){
+var info = getContactInfo(c);
+if(info.hasNominative) return "Contact nominatif (a requalifier)";
+if(info.hasInstitutional) return "Contact institutionnel";
+return "Decideur a qualifier";
+}
+function nextAction(c){
+var info = getNextActionInfo(c);
+if(info && info.action) return info.action;
+if(c.crm === "Jamais contactee" || c.crm === "Jamais contacte") return "Identifier interlocuteur (site officiel / LinkedIn) et preparer premier contact";
+return "A definir";
+}
+function renderSignalBanner(c){
+var s = getSignalInfo(c);
+if(!s) return "";
+var cls = signalClass(s.niveau);
+return "<div class=\"signal-banner " + cls + "\"><div class=\"signal-label\">Signal commercial</div>" +
+"<div class=\"signal-niveau\">" + esc(s.niveau) + "</div>" +
+(s.raison ? "<div class=\"signal-raison\">" + esc(s.raison) + "</div>" : "") + "</div>";
+}
+function renderMozBlock(c){
+var sec = findExtra(c, /^Presence Mozambique - projets verifies$/i);
+if(!sec) return "<div class=\"sec-card\"><h3>Presence Mozambique &mdash; projets verifies</h3><p class=\"note-inline\">A qualifier -- aucun projet verifie a ce stade.</p></div>";
+return "<div class=\"sec-card\"><h3>Presence Mozambique &mdash; projets verifies</h3>" + renderBody(sec.lines) + "</div>";
+}
+function renderContactsBlock(c){
+var sec = findExtra(c, /^Qui contacter$/i);
+if(!sec) return "<div class=\"sec-card\"><h3>Qui contacter ?</h3><div class=\"decision-banner qualify\">Decideur a qualifier &mdash; aucun contact nominatif public verifie trouve a ce stade.</div></div>";
+var info = getContactInfo(c);
+var banner = info.aQualifier ? "<div class=\"decision-banner qualify\">Decideur a qualifier &mdash; aucun contact nominatif public verifie trouve a ce stade.</div>" : "";
+return "<div class=\"sec-card\"><h3>Qui contacter ?</h3>" + banner + renderBody(sec.lines) + "</div>";
+}
+function renderCanauxBlock(c){
+var sec = findExtra(c, /^Comment entrer chez eux$/i);
+if(!sec) return "";
+return "<div class=\"sec-card\"><h3>Comment entrer chez eux ?</h3>" + renderBody(sec.lines) + "</div>";
+}
+function renderVenteBlock(c){
+var local = findExtra(c, /^Ce que SADMUN peut vendre - Partenaire local$/i);
+var logi = findExtra(c, /^Ce que SADMUN peut vendre - Partenaire logistique$/i);
+if(!local && !logi) return "";
+return "<div class=\"sec-card\"><h3>Ce que SADMUN peut leur vendre</h3><div class=\"vente-grid\">" +
+"<div class=\"vente-col\"><h4>Partenaire local</h4>" + (local ? renderBody(local.lines) : "<p>A qualifier.</p>") + "</div>" +
+"<div class=\"vente-col\"><h4>Partenaire logistique</h4>" + (logi ? renderBody(logi.lines) : "<p>A qualifier.</p>") + "</div>" +
+"</div></div>";
+}
+function renderPrepoBlock(c){
+var sec = findExtra(c, /^Pre-positionnement$/i);
+if(!sec) return "";
+return "<div class=\"sec-card\"><h3>Pre-positionnement &mdash; opportunite avant appel d'offres</h3>" + renderBody(sec.lines) + "</div>";
+}
+function renderNextActionBlock(c){
+var sec = findExtra(c, /^Prochaine action$/i);
+if(!sec) return "";
+var info = getNextActionInfo(c) || {};
+return "<div class=\"action-callout\"><div class=\"action-callout-label\">Prochaine action prioritaire</div>" +
+"<div class=\"action-callout-text\">" + esc(info.action || "A qualifier") + "</div>" +
+"<div class=\"action-meta\">" +
+(info.date ? "<span><strong>Date cible :</strong> " + esc(info.date) + "</span>" : "") +
+(info.canal ? "<span><strong>Canal :</strong> " + esc(info.canal) + "</span>" : "") +
+(info.objectif ? "<span><strong>Objectif :</strong> " + esc(info.objectif) + "</span>" : "") +
+"</div></div>";
+}
+var KNOWN_EXTRA_HEADINGS = /^(Signal commercial|Presence Mozambique - projets verifies|Qui contacter|Comment entrer chez eux|Ce que SADMUN peut vendre - Partenaire local|Ce que SADMUN peut vendre - Partenaire logistique|Pre-positionnement|Prochaine action|Email de prospection|CRM et suivi)$/i;
+
 function extractEmailDraft(c){
 var subject = "", body = "", to = "", followup7 = "", followup21 = "";
 (c.extra || []).forEach(function(sec){
@@ -614,59 +764,58 @@ ta.select();
 try{ navigator.clipboard.writeText(ta.value); }catch(e){ document.execCommand("copy"); }
 }
 function renderCompanyDetail(main, name){
-  main.innerHTML = "<div class=\"empty\">Chargement...</div>";
-  getCompanies().then(function(list){
-    var c = list.filter(function(x){ return x.name === name; })[0];
-    if(!c){ main.innerHTML = "<div class=\"empty\">Entreprise introuvable dans le registre.</div>"; return; }
-    var f = c.fields;
-    var decRows = c.decideurs.map(function(d){
-      return "<tr><td>" + esc(d.role) + "</td><td>" + inline(d.val) + "</td></tr>";
-    }).join("");
+main.innerHTML = "<div class=\"empty\">Chargement...</div>";
+getCompanies().then(function(list){
+var c = list.filter(function(x){ return x.name === name; })[0];
+if(!c){ main.innerHTML = "<div class=\"empty\">Entreprise introuvable dans le registre.</div>"; return; }
+var f = c.fields;
+var decRows = c.decideurs.map(function(d){
+return "<tr><td>" + esc(d.role) + "</td><td>" + inline(d.val) + "</td></tr>";
+}).join("");
 
 var draft = extractEmailDraft(c);
 CURRENT_COMPANY_DRAFT = draft;
-CURRENT_COMPANY_NAME = c.name;    main.innerHTML =
-      "<div class=\"fade-in\">" +
-      "<div class=\"crumb\"><span onclick=\"location.hash='#/companies'\">Entreprises internationales</span> / " + esc(c.name) + "</div>" +
-      "<div class=\"detail-head\">" +
-      "<div class=\"detail-badges\">" + tierTag(c.tier) + "<span class=\"tag tag-gray\">Score " + c.score + "</span>" + mozTag(c.moz) + "</div>" +
-      "<div class=\"detail-title\">" + esc(c.name) + "</div>" +
-      "<div class=\"detail-sub\">" + esc(c.sector) + " &middot; " + esc(c.country) + "</div>" +
-      "<div class=\"detail-grid\">" +
-      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Site officiel</div><div class=\"mini-stat-val\">" + esc(f["Site officiel"] || "A qualifier") + "</div></div>" +
-      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Afrique</div><div class=\"mini-stat-val\">" + inline(f["Presence Afrique"] || "A qualifier") + "</div></div>" +
-      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Afrique australe</div><div class=\"mini-stat-val\">" + inline(f["Presence Afrique australe"] || "A qualifier") + "</div></div>" +
-      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Mozambique</div><div class=\"mini-stat-val\">" + mozTag(c.moz) + "</div></div>" +
-      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Statut CRM</div><div class=\"mini-stat-val\">" + esc(c.crm) + "</div></div>" +
-      "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Niveau de confiance</div><div class=\"mini-stat-val\">" + inline(f["Niveau de confiance"] || "A qualifier") + "</div></div>" +
-      "</div>" +
+CURRENT_COMPANY_NAME = c.name;
+
+var leftover = (c.extra || []).filter(function(s){ return !KNOWN_EXTRA_HEADINGS.test(s.heading); });
+
+main.innerHTML =
+"<div class=\"fade-in\">" +
+"<div class=\"crumb\"><span onclick=\"location.hash='#/companies'\">Entreprises internationales</span> / " + esc(c.name) + "</div>" +
+"<div class=\"detail-head\">" +
+"<div class=\"detail-badges\">" + tierTag(c.tier) + "<span class=\"tag tag-gray\">Score " + c.score + "</span>" + mozTag(c.moz) + crmTag(c.crm) + "</div>" +
+"<div class=\"detail-title\">" + esc(c.name) + "</div>" +
+"<div class=\"detail-sub\">" + esc(c.sector) + " &middot; " + esc(c.country) + "</div>" +
+"<div class=\"detail-grid\">" +
+"<div class=\"mini-stat\"><div class=\"mini-stat-label\">Site officiel</div><div class=\"mini-stat-val\">" + esc(f["Site officiel"] || "A qualifier") + "</div></div>" +
+"<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Afrique</div><div class=\"mini-stat-val\">" + inline(f["Presence Afrique"] || "A qualifier") + "</div></div>" +
+"<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Afrique australe</div><div class=\"mini-stat-val\">" + inline(f["Presence Afrique australe"] || "A qualifier") + "</div></div>" +
+"<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Mozambique</div><div class=\"mini-stat-val\">" + mozTag(c.moz) + "</div></div>" +
+"<div class=\"mini-stat\"><div class=\"mini-stat-label\">Statut CRM</div><div class=\"mini-stat-val\">" + crmTag(c.crm) + "</div></div>" +
+"<div class=\"mini-stat\"><div class=\"mini-stat-label\">Niveau de confiance</div><div class=\"mini-stat-val\">" + inline(f["Niveau de confiance"] || "A qualifier") + "</div></div>" +
+"</div>" +
 (draft ? "<div style=\"margin-top:16px;\"><button class=\"btn\" onclick=\"openEmailModal()\">Preparer l'email</button></div>" : "") +
 "</div>" +
-      "<div class=\"sec-card\"><h3>Intelligence commerciale</h3>" +
-      "<h4>Pourquoi cette entreprise est une cible pour SADMUN</h4><p>" + inline(f["Pourquoi cible SADMUN"] || "A qualifier") + "</p>" +
-      "<h4>Services SADMUN vendables</h4><p>" + inline(f["Services SADMUN vendables"] || "A qualifier") + "</p>" +
-      "<h4>Signal devant declencher une prise de contact</h4><p>" + inline(f["Signal de prise de contact"] || "A qualifier") + "</p>" +
-      "<h4>Types de projets pertinents</h4><p>" + inline(f["Secteur"] || "A qualifier") + "</p>" +
-      "</div>" +
-      "<div class=\"sec-card\"><h3>Decideurs (fonctions a rechercher -- aucun nom invente)</h3>" +
-      "<div class=\"table-wrap\"><table><thead><tr><th>Fonction</th><th>Statut</th></tr></thead><tbody>" + decRows + "</tbody></table></div>" +
-      "</div>" +
-      "<div class=\"sec-card\"><h3>Partner Readiness (CRM)</h3>" +
-      "<div class=\"table-wrap\"><table><tbody>" +
-      "<tr><td>Statut CRM</td><td>" + esc(c.crm) + "</td></tr>" +
-      "<tr><td>Prochaine action</td><td>" + esc(nextAction(c)) + "</td></tr>" +
-      "<tr><td>Premier contact</td><td>Non</td></tr>" +
-      "<tr><td>Presentation envoyee</td><td>Non</td></tr>" +
-      "<tr><td>Reunion realisee</td><td>Non</td></tr>" +
-      "<tr><td>NDA signe</td><td>Non</td></tr>" +
-      "<tr><td>Accord de partenariat</td><td>Non</td></tr>" +
-      "<tr><td>Referencement fournisseur</td><td>Non</td></tr>" +
-      "<tr><td>Mission realisee</td><td>Non</td></tr>" +
-      "</tbody></table></div></div>" +
-      "<div class=\"sec-card\"><h3>Sources et fiabilite</h3><p>" + inline(f["Sources publiques"] || "A qualifier") + "</p></div>" +
-      (c.extra && c.extra.length ? c.extra.map(function(s){ return "<div class=\"sec-card\"><h3>" + esc(s.heading) + "</h3>" + renderBody(s.lines) + "</div>"; }).join("") : "") +
+renderSignalBanner(c) +
+"<div class=\"sec-card\"><h3>Pourquoi cette entreprise ?</h3><p>" + inline(f["Pourquoi cible SADMUN"] || "A qualifier") + "</p></div>" +
+renderMozBlock(c) +
+renderContactsBlock(c) +
+renderCanauxBlock(c) +
+renderVenteBlock(c) +
+renderPrepoBlock(c) +
+renderNextActionBlock(c) +
+(c.decideurs && c.decideurs.length ? "<div class=\"sec-card\"><h3>Fonctions encore a rechercher</h3>" +
+"<div class=\"table-wrap\"><table><thead><tr><th>Fonction</th><th>Statut</th></tr></thead><tbody>" + decRows + "</tbody></table></div>" +
+"</div>" : "") +
+"<div class=\"sec-card\"><h3>Partner Readiness (CRM)</h3>" +
+"<div class=\"table-wrap\"><table><tbody>" +
+"<tr><td>Statut CRM actuel</td><td>" + crmTag(c.crm) + "</td></tr>" +
+"<tr><td>Pipeline</td><td style=\"color:var(--text-dim);font-size:12px;\">" + CRM_STAGES.map(function(s){ return s === c.crm ? "<strong style=\"color:var(--accent)\">[" + esc(s) + "]</strong>" : esc(s); }).join(" &rarr; ") + "</td></tr>" +
+"</tbody></table></div></div>" +
+"<div class=\"sec-card\"><h3>Sources et fiabilite</h3><p>" + inline(f["Sources publiques"] || "A qualifier") + "</p></div>" +
+(leftover.length ? leftover.map(function(s){ return "<div class=\"sec-card\"><h3>" + esc(s.heading) + "</h3>" + renderBody(s.lines) + "</div>"; }).join("") : "") +
 "</div>";
-  });
+});
 }
 
 function renderDetailSkeleton(main, crumbLabel, crumbHash){
