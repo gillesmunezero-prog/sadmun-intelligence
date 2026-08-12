@@ -180,6 +180,8 @@ var PARTNERS = [
 var CACHE = {};
 var COMPARE = {};
 var COMPANIES = null;
+var CURRENT_COMPANY_DRAFT = null;
+var CURRENT_COMPANY_NAME = "";
 
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
@@ -322,20 +324,30 @@ function prefetchAll(){
 }
 
 function parseKV(lines){
-  var fields = {};
-  var decideurs = [];
-  var inDec = false;
-  lines.forEach(function(line){
-    if(/^###\s+Decideurs/i.test(line.trim())){ inDec = true; return; }
-    var m = line.match(/^-\s*([^:]+?)\s*:\s*(.+)$/);
-    if(m){
-      if(inDec) decideurs.push({role: m[1].trim(), val: m[2].trim()});
-      else fields[m[1].trim()] = m[2].trim();
-    }
-  });
-  return {fields: fields, decideurs: decideurs};
+var fields = {};
+var decideurs = [];
+var extraSections = [];
+var mode = "fields";
+var curExtra = null;
+lines.forEach(function(line){
+var mh = line.match(/^###\s+(.*)/);
+if(mh){
+var hh = mh[1].trim();
+if(/^Decideurs/i.test(hh)){ mode = "decideurs"; curExtra = null; return; }
+mode = "extra";
+curExtra = {heading: hh, lines: []};
+extraSections.push(curExtra);
+return;
 }
-
+if(mode === "extra" && curExtra){ curExtra.lines.push(line); return; }
+var m = line.match(/^-\s*([^:]+?)\s*:\s*(.+)$/);
+if(m){
+if(mode === "decideurs") decideurs.push({role: m[1].trim(), val: m[2].trim()});
+else if(mode === "fields") fields[m[1].trim()] = m[2].trim();
+}
+});
+return {fields: fields, decideurs: decideurs, extraSections: extraSections};
+}
 function getCompanies(){
   if(COMPANIES) return Promise.resolve(COMPANIES);
   return fetchText(COMPANY_FILE).then(function(md){
@@ -349,7 +361,7 @@ function getCompanies(){
       var kv = parseKV(s.lines);
       list.push({
         name: name, country: country, heading: s.heading,
-        fields: kv.fields, decideurs: kv.decideurs,
+        fields: kv.fields, decideurs: kv.decideurs, extra: kv.extraSections || [],
         score: parseInt(kv.fields["Score de prospection"] || "0", 10) || 0,
         tier: kv.fields["Priorite commerciale SADMUN"] || "C",
         moz: kv.fields["Presence Mozambique"] || "A qualifier",
@@ -558,6 +570,49 @@ function renderCompaniesHome(main){
   });
 }
 
+
+function extractEmailDraft(c){
+var subject = "", body = "", to = "", followup7 = "", followup21 = "";
+(c.extra || []).forEach(function(sec){
+sec.lines.forEach(function(line){
+var l = line.trim();
+var m;
+if(m = l.match(/^-\s*Objet \(EN\)\s*:\s*(.+)$/i)) subject = m[1].trim();
+if(m = l.match(/^-\s*Email \(EN\)\s*:\s*(.+)$/i)) body = m[1].trim();
+if(m = l.match(/^-\s*Relance J\+7 \(EN\)\s*:\s*(.+)$/i)) followup7 = m[1].trim();
+if(m = l.match(/^-\s*Relance J\+21 \(EN\)\s*:\s*(.+)$/i)) followup21 = m[1].trim();
+if(!to){
+var m2 = l.match(/^-\s*Email general\s*:\s*(\S+@\S+)/i);
+if(m2) to = m2[1].trim();
+}
+});
+});
+if(!subject && !body) return null;
+return {to: to, subject: subject, body: body, followup7: followup7, followup21: followup21};
+}
+function openEmailModal(){
+var d = CURRENT_COMPANY_DRAFT;
+if(!d) return;
+var full = "A: " + (d.to || "A completer (voir Contacts commerciaux)") + "\nObjet: " + d.subject + "\n\n" + d.body;
+var bg = document.createElement("div");
+bg.className = "modal-bg";
+bg.onclick = function(e){ if(e.target === bg) bg.remove(); };
+bg.innerHTML = "<div class=\"modal\"><div class=\"modal-head\"><h2 style=\"margin:0;font-size:17px;\">Email de prospection - " + esc(CURRENT_COMPANY_NAME) + "</h2>" +
+"<button class=\"btn-ghost\" onclick=\"this.closest(&#39;.modal-bg&#39;).remove()\">Fermer</button></div>" +
+"<p style=\"color:var(--text-dim);font-size:12.5px;\">Brouillon a verifier avant tout envoi. Aucun envoi automatique -- copiez le texte dans votre messagerie.</p>" +
+"<textarea id=\"emailDraftArea\" style=\"width:100%;min-height:220px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:12.5px;font-family:inherit;\">" + esc(full) + "</textarea>" +
+(d.followup7 ? "<h4>Relance J+7</h4><p>" + esc(d.followup7) + "</p>" : "") +
+(d.followup21 ? "<h4>Relance J+21</h4><p>" + esc(d.followup21) + "</p>" : "") +
+"<div style=\"margin-top:14px;display:flex;gap:10px;\"><button class=\"btn\" onclick=\"copyEmailDraft()\">Copier l'email</button><button class=\"btn-ghost\" onclick=\"this.closest(&#39;.modal-bg&#39;).remove()\">Fermer</button></div>" +
+"</div>";
+document.body.appendChild(bg);
+}
+function copyEmailDraft(){
+var ta = document.getElementById("emailDraftArea");
+if(!ta) return;
+ta.select();
+try{ navigator.clipboard.writeText(ta.value); }catch(e){ document.execCommand("copy"); }
+}
 function renderCompanyDetail(main, name){
   main.innerHTML = "<div class=\"empty\">Chargement...</div>";
   getCompanies().then(function(list){
@@ -567,7 +622,10 @@ function renderCompanyDetail(main, name){
     var decRows = c.decideurs.map(function(d){
       return "<tr><td>" + esc(d.role) + "</td><td>" + inline(d.val) + "</td></tr>";
     }).join("");
-    main.innerHTML =
+
+var draft = extractEmailDraft(c);
+CURRENT_COMPANY_DRAFT = draft;
+CURRENT_COMPANY_NAME = c.name;    main.innerHTML =
       "<div class=\"fade-in\">" +
       "<div class=\"crumb\"><span onclick=\"location.hash='#/companies'\">Entreprises internationales</span> / " + esc(c.name) + "</div>" +
       "<div class=\"detail-head\">" +
@@ -581,7 +639,9 @@ function renderCompanyDetail(main, name){
       "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Presence Mozambique</div><div class=\"mini-stat-val\">" + mozTag(c.moz) + "</div></div>" +
       "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Statut CRM</div><div class=\"mini-stat-val\">" + esc(c.crm) + "</div></div>" +
       "<div class=\"mini-stat\"><div class=\"mini-stat-label\">Niveau de confiance</div><div class=\"mini-stat-val\">" + inline(f["Niveau de confiance"] || "A qualifier") + "</div></div>" +
-      "</div></div>" +
+      "</div>" +
+(draft ? "<div style=\"margin-top:16px;\"><button class=\"btn\" onclick=\"openEmailModal()\">Preparer l'email</button></div>" : "") +
+"</div>" +
       "<div class=\"sec-card\"><h3>Intelligence commerciale</h3>" +
       "<h4>Pourquoi cette entreprise est une cible pour SADMUN</h4><p>" + inline(f["Pourquoi cible SADMUN"] || "A qualifier") + "</p>" +
       "<h4>Services SADMUN vendables</h4><p>" + inline(f["Services SADMUN vendables"] || "A qualifier") + "</p>" +
@@ -604,7 +664,8 @@ function renderCompanyDetail(main, name){
       "<tr><td>Mission realisee</td><td>Non</td></tr>" +
       "</tbody></table></div></div>" +
       "<div class=\"sec-card\"><h3>Sources et fiabilite</h3><p>" + inline(f["Sources publiques"] || "A qualifier") + "</p></div>" +
-      "</div>";
+      (c.extra && c.extra.length ? c.extra.map(function(s){ return "<div class=\"sec-card\"><h3>" + esc(s.heading) + "</h3>" + renderBody(s.lines) + "</div>"; }).join("") : "") +
+"</div>";
   });
 }
 
@@ -814,3 +875,4 @@ window.addEventListener("hashchange", route);
 window.addEventListener("DOMContentLoaded", function(){ route(); prefetchAll(); getCompanies(); });
 if(document.readyState !== "loading"){ route(); prefetchAll(); getCompanies(); }
 </script>\n</body>\n</html>\n
+
