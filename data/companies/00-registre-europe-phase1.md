@@ -331,7 +331,7 @@ GAUFF dispose d'un bureau etabli de longue date a Maputo et d'un historique de p
 - Pourquoi cible SADMUN : Groupe d'ingenierie francais majeur, actif sur les grands projets d'infrastructure en Afrique ; cible naturelle pour un partenariat local au Mozambique -- mais perimetre africain en cours de reorganisation (voir Signal commercial).
 - Services SADMUN vendables : Appui local pour etudes de terrain, logistique, traduction, relations avec administrations locales (a confirmer une fois le perimetre clarifie).
 - Signal de prise de contact : Clarification du perimetre Egis / Infras, puis attribution d'une mission d'ingenierie au Mozambique par un bailleur international.
-- Statut CRM : Jamais contacte
+- Statut CRM : Jamais contactee
 - Niveau de confiance : Moyen (dossier plus complexe que prevu suite au signal strategique ci-dessous)
 - Sources publiques : egis-group.com (communique officiel du 20/02/2026), africabusinessplus.com, Jeune Afrique. Voir sections ci-dessous.
 
@@ -376,7 +376,7 @@ La reorganisation africaine d'Egis (annoncee le 20/02/2026) cree une fenetre d'i
 - Relance J+21 : Non applicable (aucun email envoye a ce stade)
 
 ### CRM et suivi
-- Statut CRM : Jamais contacte
+- Statut CRM : Jamais contactee
 - Derniere verification : 11/08/2026
 
 ## SUEZ (France)
